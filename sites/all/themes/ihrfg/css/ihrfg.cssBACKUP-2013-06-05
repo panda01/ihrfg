@@ -1,0 +1,2696 @@
+/* $Id: html-reset.css,v 1.6.2.2 2010/06/26 15:36:03 johnalbin Exp $ */
+
+/**
+ * @file
+ * HTML Element Styling
+ *
+ * Ok, I admit it. I fooled you. This isn't a "reset" stylesheet. Instead this
+ * is the place where you should set (not reset) the default styling for all
+ * HTML elements.
+ *
+ * @see http://meiert.com/en/blog/20080419/reset-style-sheets-are-bad/
+ * @see http://snook.ca/archives/html_and_css/no_css_reset/
+ */
+
+
+/*
+ * Fonts
+ *
+ * Our font size and line height declarations are based on the following ALA
+ * article:
+ *   http://www.alistapart.com/articles/howtosizetextincss
+ *
+ * All modern browsrs use a 16px default font size. Specifying the font-size
+ * and line-height in ems (relative to the 16px default font) allows the user
+ * to resize the font in the browser and produces the most consistent results
+ * across different browsers.
+ */
+body {
+  font-size: 100%; /* Fixes exaggerated text resizing in IE6 and IE7 */
+}
+
+#skip-link,
+#page {
+  /*
+   * To use a 12px font size on the page, delete the 14px declarations.
+   * to use a 14px font size on the page, delete the 12px declarations.
+   */
+
+  /* Use a 12px base font size with a 16px line height */
+  font-size: 0.75em; /* 16px x .75 = 12px */
+  line-height: 1.333em; /* 12px x 1.333 = 16px */
+
+  /* Use a 14px base font size with a 18px line height */
+  font-size: 0.875em; /* 16px x .875 = 14px */
+  line-height: 1.286em; /* 14px x 1.286 = 18px */
+}
+
+body,
+caption,
+th,
+td,
+input,
+textarea,
+select,
+option,
+legend,
+fieldset {
+  /* The following font family declarations are based on the Microsoft core web
+   * fonts which are common fonts available on most computer systems. The DejaVu
+   * fonts are commonly available on Linux systems where the MS fonts are less
+   * common. Tahoma and Helvetica are also widely available.
+   *
+   * A user's web browser will look at the comma-separated list and will
+   * attempt to use each font in turn until it finds one that is available
+   * on the user's computer. The final "generic" font (sans-serif or serif)
+   * hints at what type of font to use if the web browser doesn't find any
+   * of the fonts in the list.
+
+  font-family: "Times New Roman", Times, Georgia, "DejaVu Serif", serif;
+  font-family: Times, "Times New Roman", Georgia, "DejaVu Serif", serif;
+  font-family: Georgia, "Times New Roman", "DejaVu Serif", serif;
+
+  font-family: Verdana, Tahoma, "DejaVu Sans", sans-serif;
+  font-family: Tahoma, Verdana, "DejaVu Sans", sans-serif;
+  font-family: Helvetica, Arial, "Nimbus Sans L", sans-serif;
+  font-family: Arial, Helvetica, "Nimbus Sans L", sans-serif;
+
+  font-family: "Courier New", "DejaVu Sans Mono", monospace;
+
+   */
+
+  font-family: "Century Gothic", "Apple Gothic", sans-serif;
+}
+
+pre,
+code {
+  font-size: 1.1em; /* Monospace fonts can be hard to read */
+  font-family: "Courier New", "DejaVu Sans Mono", monospace;
+}
+
+/*
+ * Headings
+ */
+h1 {
+  font-size: 2em;
+  font-weight: normal;
+  line-height: 1.3em;
+  margin-top: 0;
+  margin-bottom: 0.5em; /* 0.5em is equavalent to 1em in the page's base font.
+                           Remember, a margin specified in ems is relative to
+                           the element's font-size, not to the pages' base
+                           font size. So, for example, if we want a 1em margin
+                           (relative to the base font), we have to divide that
+                           length by the element's font-size:
+                           1em / 2em = 0.5em */
+}
+
+h2 {
+  font-size: 1.1em;
+  font-weight: bold;
+  line-height: 1.3em;
+  margin-top: 0.667em; /* Equivalent to 1em in the page's base font: 1 / 1.5 = 0.667em */
+  margin-bottom: 0.667em;
+}
+
+h3 {
+  font-size: 1.3em;
+  font-weight: normal;
+  line-height: 1.3em;
+  margin-top: 0.769em; /* Equivalent to 1em in the page's base font: 1 / 1.3 = 0.769 */
+  margin-bottom: 0.769em;
+}
+
+h4,
+h5,
+h6 {
+  font-size: 1.1em;
+  font-weight: normal;
+  line-height: 1.3em;
+  margin-top: 0.909em; /* Equivalent to 1em in the page's base font: 1 / 1.1 = 0.909 */
+  margin-bottom: 0.909em;
+}
+
+/*
+ * Block-level elements
+ */
+p,
+ul,
+ol,
+dl,
+pre,
+table,
+fieldset {
+  margin: 1em 0;
+}
+
+blockquote {
+  margin: 1em 2em;
+}
+
+/*
+ * Lists
+ *
+ * We need to standardize the list item indentation.
+ */
+ul,
+ol {
+  margin-left: 0;
+  padding-left: 2em; /* LTR */
+}
+
+.block ul,
+.item-list ul /* Drupal overrides */ {
+  margin: 1em 0;
+  padding: 0 0 0 2em; /* LTR */
+}
+
+ul ul, ul ol,
+ol ol, ol ul,
+.block ul ul, .block ul ol,
+.block ol ol, .block ol ul,
+.item-list ul ul, .item-list ul ol,
+.item-list ol ol, .item-list ol ul {
+  margin: 0;
+}
+
+li {
+  margin: 0;
+  padding: 0;
+}
+
+.item-list ul li /* Drupal override */ {
+  margin: 0;
+  padding: 0;
+  list-style: inherit;
+}
+
+ul.menu li,
+li.expanded,
+li.collapsed,
+li.leaf /* Drupal override */ {
+  margin: 0;
+  padding: 0;
+}
+
+ul          { list-style-type: disc; }
+ul ul       { list-style-type: circle; }
+ul ul ul    { list-style-type: square; }
+ul ul ul ul { list-style-type: circle; }
+ol          { list-style-type: decimal; }
+ol ol       { list-style-type: lower-alpha; }
+ol ol ol    { list-style-type: decimal; }
+
+dt {
+  margin: 0;
+  padding: 0;
+}
+
+dd {
+  margin: 0 0 0 2em;
+  padding: 0;
+}
+
+/*
+ * Links
+ *
+ * The order of link states are based on Eric Meyer's article:
+ * http://meyerweb.com/eric/thoughts/2007/06/11/who-ordered-the-link-states
+ */
+a:link {
+	color: #3d6f0c; /*color: #669933;*/
+	text-decoration: none;
+}
+
+a:visited {
+	color: #3d6f0c; /*color: #669933; themer note - edit to fit design */
+	text-decoration: none; /* themer note - edit to fit design */
+}
+
+a:hover,
+a:focus {
+	text-decoration: underline;
+}
+
+a:active {
+}
+
+/*
+ * Tables
+ *
+ * Drupal provides table styling which is only useful for its admin section
+ * forms, so we override this default CSS. (We set it back in forms.css.)
+ */
+table {
+  border-collapse: collapse;
+  /* width: 100%; */ /* Prevent cramped-looking tables */
+}
+
+th,
+thead th,
+tbody th {
+  text-align: left; /* LTR */
+  padding: 0;
+  border-bottom: none;
+}
+
+tbody {
+  border-top: none;
+}
+
+/*
+ * Abbreviations
+ */
+abbr {
+  border-bottom: 1px dotted #666;
+  cursor: help;
+  white-space: nowrap;
+}
+
+abbr.created /* Date-based "abbreviations" show computer-friendly timestamps which are not human-friendly. */ {
+  border: none;
+  cursor: auto;
+  white-space: normal;
+}
+
+/*
+ * Images
+ */
+img {
+  border: 0;
+}
+
+/*
+ * Horizontal rules
+ */
+hr {
+  height: 1px;
+  border: 1px solid #666;
+}
+
+/*
+ * Forms
+ */
+form {
+  margin: 0;
+  padding: 0;
+}
+
+fieldset {
+  margin: 1em 0;
+  padding: 0.5em;
+}
+
+/* $Id: wireframes.css,v 1.10 2009/11/04 21:01:11 johnalbin Exp $ */
+
+/**
+ * @file
+ * Wireframes Styling
+ *
+ * Add wireframes to the basic layout elements.
+ */
+
+
+.with-wireframes #header .section,
+.with-wireframes #content .section,
+.with-wireframes #navigation .section,
+.with-wireframes .region-sidebar-first .section,
+.with-wireframes .region-sidebar-second .section,
+.with-wireframes #footer .section {
+  margin: 1px;
+  padding: 2px;
+  border: 1px solid #ccc;
+}
+
+.with-wireframes .region-page-closure {
+  margin-top: 1px;
+  padding: 2px;
+  border: 1px solid #ccc;
+}
+
+/* $Id: page-backgrounds.css,v 1.8 2009/11/04 20:57:49 johnalbin Exp $ */
+
+/**
+ * @file
+ * Page Background Styling
+ *
+ * The default layout method of Zen doesn't give themers equal-height columns.
+ * However, equal-height columns are difficult to achieve and totally
+ * unnecessary. Instead, use the Faux Columns method described in the following
+ * ALA article:
+ *   http://www.alistapart.com/articles/fauxcolumns/
+ */
+
+
+body {
+}
+
+#page-wrapper {
+}
+
+#page {
+}
+
+#header {
+}
+
+#header .section {
+}
+
+#main-wrapper {
+}
+
+#main {
+}
+
+#footer {
+}
+
+#footer .section {
+}
+
+
+/* $Id: tabs.css,v 1.2 2009/08/12 08:03:53 johnalbin Exp $ */
+
+/**
+ * @file
+ * Tabs Styling
+ *
+ * Adds styles for the primary and secondary tabs.
+ *
+ * Compare this with default CSS found in the system module's stylesheet (a copy
+ * of which is in drupal6-reference.css, line 510.)
+ */
+
+
+div.tabs {
+  margin: 0 0 5px 0;
+}
+
+ul.primary {
+  margin: 0;
+  padding: 0 0 0 10px; /* LTR */
+  border-width: 0;
+  list-style: none;
+  white-space: nowrap;
+  line-height: normal;
+  background: url(../images/tab-bar.png) repeat-x left bottom;
+}
+
+ul.primary li {
+  float: left; /* LTR */
+  margin: 0;
+  padding: 0;
+}
+
+ul.primary li a {
+  display: block;
+  height: 24px;
+  margin: 0;
+  padding: 0 0 0 5px; /* width of tab-left.png */
+  border-width: 0;
+  font-weight: bold;
+  text-decoration: none;
+  color: #777;
+  background-color: transparent;
+  background: url(../images/tab-left.png) no-repeat left -38px;
+}
+
+ul.primary li a .tab {
+  display: block;
+  height: 20px; /* 24px (parent) - 4px (padding) */
+  margin: 0;
+  padding: 4px 13px 0 6px;
+  border-width: 0;
+  line-height: 20px;
+  background: url(../images/tab-right.png) no-repeat right -38px;
+}
+
+ul.primary li a:hover {
+  border-width: 0;
+  background-color: transparent;
+  background: url(../images/tab-left.png) no-repeat left -76px;
+}
+
+ul.primary li a:hover .tab {
+  background: url(../images/tab-right.png) no-repeat right -76px;
+}
+
+ul.primary li.active a,
+ul.primary li.active a:hover {
+  border-width: 0;
+  color: #000;
+  background-color: transparent;
+  background: url(../images/tab-left.png) no-repeat left 0;
+}
+
+ul.primary li.active a .tab,
+ul.primary li.active a:hover .tab {
+  background: url(../images/tab-right.png) no-repeat right 0;
+}
+
+ul.secondary {
+  margin: 0;
+  padding: 0 0 0 5px; /* LTR */
+  border-bottom: 1px solid #c0c0c0;
+  list-style: none;
+  white-space: nowrap;
+  background: url(../images/tab-secondary-bg.png) repeat-x left bottom;
+}
+
+ul.secondary li {
+  float: left; /* LTR */
+  margin: 0 5px 0 0;
+  padding: 5px 0;
+  border-right: none; /* LTR */
+}
+
+ul.secondary a {
+  display: block;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #c0c0c0;
+  text-decoration: none;
+  color: #777;
+  background: url(../images/tab-secondary.png) repeat-x left -56px;
+}
+
+ul.secondary a .tab {
+  display: block;
+  height: 18px; /* 24px (parent) - 6px (padding) */
+  margin: 0;
+  padding: 3px 8px;
+  line-height: 18px;
+}
+
+ul.secondary a:hover {
+  background: url(../images/tab-secondary.png) repeat-x left bottom;
+}
+
+ul.secondary a.active,
+ul.secondary a.active:hover {
+  border: 1px solid #c0c0c0;
+  color: #000;
+  background: url(../images/tab-secondary.png) repeat-x left top;
+}
+
+
+/* $Id: messages.css,v 1.3 2009/08/12 08:37:42 johnalbin Exp $ */
+
+/**
+ * @file
+ * Message Styling
+ *
+ * Sensible styling for Drupal's error/warning/status messages.
+ */
+
+
+div.messages,
+div.status,
+div.warning,
+div.error /* Important messages (status, warning, and error) for the user */ {
+  min-height: 21px;
+  margin: 0 1em 5px 1em;
+  border: 2px solid #ff7;
+  padding: 5px 5px 5px 35px; /* LTR */
+  color: #000;
+  background-color: #ffc;
+  background-image: url(../images/messages-status.png);
+  background-repeat: no-repeat;
+  background-position: 5px 5px; /* LTR */
+}
+
+div.status /* Normal priority messages */ {
+}
+
+div.warning /* Medium priority messages */ {
+  border-color: #fc0;
+  background-image: url(../images/messages-warning.png);
+}
+
+div.warning,
+tr.warning {
+  color: #000; /* Drupal core uses #220 */
+  background-color: #ffc;
+}
+
+div.error /* High priority messages. See also the .error declaration in pages.css. */ {
+  /* border: 1px solid #d77; */ /* Drupal core uses: 1px solid #d77 */
+  border-color: #c00;
+  background-image: url(../images/messages-error.png);
+}
+
+div.error,
+tr.error {
+  color: #900; /* Drupal core uses #200 */
+  background-color: #fee;
+}
+
+div.messages ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+
+/* $Id: pages.css,v 1.18.2.3 2010/06/26 17:18:58 johnalbin Exp $ */
+
+/**
+ * @file
+ * Page Styling
+ *
+ * Style the markup found in page.tpl.php. Also includes some styling of
+ * miscellaneous Drupal elements that appear in the $content variable, such as
+ * ul.links, .pager, .more-link, etc.
+ */
+
+
+/*
+ * Body
+ */
+body {
+  margin: 0;
+  padding: 0;
+	background: #f3f3f4;
+}
+
+#page-wrapper {
+	width:100%;
+	background: url('/sites/all/themes/ihrfg/images/header-bg.png') repeat-x left top #f3f3f4;
+}
+
+#page {
+	width:960px;
+	margin:0 auto;
+}
+
+/*
+ * The skip navigation link will be completely hidden until a user tabs to the
+ * link. See http://www.webaim.org/techniques/skipnav/
+ */
+#skip-link a,
+#skip-link a:visited {
+  position: absolute;
+  display: block;
+  left: 0;
+  top: -500px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  text-align: center;
+  background-color: #666;
+  color: #fff;
+}
+
+#skip-link a:hover,
+#skip-link a:active,
+#skip-link a:focus {
+  position: static;
+  width: 100%;
+  height: auto;
+  padding: 2px 0 3px 0;
+}
+
+/*
+ * Header
+ */
+#header {
+}
+
+#header .section {
+}
+
+#logo /* Wrapping link for logo */ {
+  float: left; /* LTR */
+  margin: 0;
+  padding: 0;
+}
+
+#logo img {
+  vertical-align: bottom;
+}
+
+#name-and-slogan /* Wrapper for website name and slogan */ {
+}
+
+#top-right{
+	margin-top:20px;
+}
+
+	#global-navigation li{
+		border-right:1px solid #333;
+		padding:0 10px;
+		line-height:12px;
+	}
+
+		#global-navigation li.last{
+			border-right:none;
+		}
+
+	#global-navigation li a{
+		font-size:12px;
+		color:#333;
+	}
+	
+	#search-box .form-text{
+		border:1px solid #808080;
+		height:12px;
+		line-height:12px;
+		font-size:12px;
+		text-align:right;
+		padding:4px;
+		background:#fff;
+		color:#333;
+		width:150px;
+	}
+
+	#search-box .form-submit{
+		background:url(../images/search-box-go.png) left top no-repeat;
+		width:23px;
+		height:22px;
+		border:none;
+		cursor:pointer;
+		text-indent:-9999px;
+		font-size:0;
+		line-height:0;
+		vertical-align: middle;
+	}
+
+h1#site-name,
+div#site-name /* The name of the website */ {
+  margin: 0;
+  font-size: 2em;
+  line-height: 1.3em;
+}
+
+#site-name a:link,
+#site-name a:visited {
+  color: #000;
+  text-decoration: none;
+}
+
+#site-name a:hover,
+#site-name a:focus {
+  text-decoration: underline;
+}
+
+#site-slogan /* The slogan (or tagline) of a website */ {
+}
+
+.region-header /* Wrapper for any blocks placed in the header region */ {
+}
+
+/*
+ * Main (container for everything else)
+ */
+#main-wrapper {
+}
+
+#main {
+}
+
+/*
+ * Content
+ */
+
+.two-sidebars #content {		
+	padding:0 12px 0 10px;
+	background:url(../images/content-2-bg.png) left top repeat-y;
+	margin:5px 5px 5px 0;
+	float:left;
+	width:470px;
+}
+
+.sidebar-second #content {
+	width:680px;
+	padding:0 12px 0 10px;
+	background:url(../images/content-bg.png) left top repeat-y;
+/* 	margin:5px 5px 5px 0; */
+	float:left;
+}
+
+#content .section {
+	border-bottom:1px solid #999999;
+	border-top:1px solid #999999;
+}
+
+#mission /* The mission statement of the site (displayed on homepage) */ {
+}
+
+.region-content-top /* Wrapper for any blocks placed in the "content top" region */ {
+}
+
+.breadcrumb /* The path to the current page in the form of a list of links */ {
+  padding-bottom: 0; /* Undo system.css */
+	padding:5px 20px;
+	font-size:12px;
+}
+
+#home-panels .panel-col-first, #home-panels .panels-flexible-column-first {
+	padding-right:10px;
+	border-right:1px solid #666;
+	width:47%;
+}
+
+#home-panels .panel-col-last, #home-panels .panels-flexible-column-last {
+	width:47%;
+	padding:0 0 0 10px;
+}
+
+#home-panels h2 {
+	margin: 0px 0px 0px 0px;
+}
+
+#home-panels p {
+	margin: 0;
+}
+
+.panel-2col .panel-col-last .inside .panel-pane {
+	padding:0;
+}
+
+#home-panels div.pane-content,
+#members-area div.pane-content {
+padding-left: 10px;
+margin-top: 10px;
+}
+
+h1.title, /* The title of the page */
+h2.title, /* Block title or the title of a piece of content when it is given in a list of content */
+h3.title /* Comment title */ {
+border-bottom:1px solid #949090;
+color:#0e4d85;
+margin:0 0 1em;
+}
+
+h1.title{
+	font-size:18px;
+	font-weight:bold;
+	padding:10px 10px 5px 10px;
+	margin:0 10px 10px 10px;
+}
+
+h2.pane-title{
+	font-size:18px;
+	font-weight:bold;
+	padding:10px 10px 5px 10px;
+	margin:0 10px 10px 10px;
+	border-bottom:1px solid #949090;
+	color:#0e4d85;
+	margin:0 0 1em;
+}
+
+tr.even /* Some tables have rows marked even or odd. */ {
+  /* background-color: #eee; */ /* Drupal core uses a #eee background */
+}
+
+tr.odd {
+  /* background-color: #eee; */ /* Drupal core uses a #eee background */
+}
+
+div.messages /* Important messages (status, warning, and error) for the user. See also the declarations in messages.css. */ {
+}
+
+div.status /* Normal priority messages */ {
+}
+
+div.warning,
+tr.warning /* Medium priority messages */ {
+  /* border: 1px solid #f0c020; */ /* Drupal core uses: 1px solid #f0c020 */
+}
+
+div.error,
+tr.error /* High priority messages. See also the .error declaration below. */ {
+}
+
+.error /* Errors that are separate from div.messages status messages. */ {
+  /* color: #e55; */ /* Drupal core uses a #e55 background */
+}
+
+.warning /* Warnings that are separate from div.messages status messages. */ {
+  /* color: #e09010; */ /* Drupal core uses a #e09010 background */
+}
+
+div.tabs /* See also the tabs.css file. */ {
+}
+
+.help /* Help text on a page */ {
+  margin: 1em 0;
+}
+
+.more-help-link /* Link to more help */ {
+  font-size: 0.85em;
+  text-align: right;
+}
+
+#content-area /* Wrapper for the actual page content */ {
+padding:5px 10px 30px 20px;
+}
+
+ul.links /* List of links */ {
+  margin: 1em 0;
+  padding: 0;
+}
+
+ul.links.inline {
+  margin: 0;
+  display: inline;
+}
+
+ul.links li {
+  display: inline;
+  list-style-type: none;
+  padding: 0 0.5em;
+}
+
+/* Forum Stuff */
+
+li.comment_delete,
+li.comment_edit,
+li.comment_reply {
+background: #669933;
+padding: 2px 4px;
+font-size: .875em;
+}
+
+li.comment_delete a,
+li.comment_edit a,
+li.comment_reply a {
+color: #fff;
+}
+
+.pager /* A list of page numbers when more than 1 page of content is available */ {
+  clear: both;
+  margin: 1em 0;
+  text-align: center;
+}
+
+.pager a,
+.pager strong.pager-current /* Each page number in the pager list */ {
+  padding: 0.5em;
+}
+
+.feed-icons /* The links to the RSS or Atom feeds for the current list of content */ {
+margin:1em 30px;
+}
+
+.more-link /* Aggregator, blog, and forum more link */ {
+  text-align: right; /* LTR */
+}
+
+.region-content-bottom /* Wrapper for any blocks placed in the "content bottom" region */ {
+}
+
+.cite {
+	text-align: right;
+}
+
+/*
+ * First sidebar (on left in LTR languages, on right in RTL)
+ *
+ * Remember to NOT add padding or margin to your .region-sidebar-first
+ * (see the layout.css file.)
+ */
+.region-sidebar-first {
+	width:200px;
+	margin:5px 10px 0 0;
+}
+
+.region-sidebar-first .section {
+}
+
+/*
+ * Second sidebar (on right in LTR languages, on left in RTL)
+ *
+ * Remember to NOT add padding or margin to your .region-sidebar-second
+ * (see the layout.css file.)
+ */
+ 
+/*
+.region-sidebar-second {
+	float:right;
+	margin:5px 0 0 0;
+	padding:0 7px 0 0;
+	width:236px;
+	background:url(../images/sidebar-bg.png) right top repeat-y;
+}
+*/
+
+.region-sidebar-second {
+background:url("../images/sidebar-bg.png") repeat-y scroll right top transparent;
+margin:5px 0 0;
+padding:0 7px 0 0;
+float: right;
+margin-right: 5px;
+width:236px;
+}
+
+.with-navigation .region-sidebar-second  {
+margin-top: 5px;
+}
+
+
+.region-sidebar-second .section {
+	background:#fff;
+	border:1px solid #a1a1a1;
+	width:236px;
+	margin:0;
+}
+
+	.region-sidebar-second .section .block {
+		padding:10px;
+	}
+
+.with-navigation #content, .with-navigation .region-sidebar-first {
+	margin-top:2px;
+}
+
+
+/*
+ * Footer
+ */
+#footer {
+}
+
+#footer .section {
+}
+
+#footer-message /* Wrapper for the footer message from Drupal's "Site information"
+                   and for any blocks placed in the footer region */ {
+}
+
+.region-footer {
+}
+
+/*
+ * Closure
+ */
+.region-page-closure /* Wrapper for any blocks placed in the closure region */ {
+}
+
+/*
+ * Drupal boxes
+ *
+ * Wrapper for Comment form, Comment viewing options, Menu admin, and
+ * Search results.
+ */
+.box /* Wrapper for box */ {
+}
+
+.box h2 /* Box title */ {
+}
+
+.box .content /* Box's content wrapper */ {
+}
+
+/*
+ * Markup free clearing (See: http://www.positioniseverything.net/easyclearing.html )
+ */
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+/**
+ * Hide elements from all users.
+ *
+ * Used for elements which should not be immediately displayed to any user. An
+ * example would be a collapsible fieldset that will be expanded with a click
+ * from a user. The effect of this class can be toggled with the jQuery show()
+ * and hide() functions.
+ */
+.element-hidden {
+  display: none;
+}
+
+/**
+ * Hide elements visually, but keep them available for screen-readers.
+ *
+ * Used for information required for screen-reader users to understand and use
+ * the site where visual display is undesirable. Information provided in this
+ * manner should be kept concise, to avoid unnecessary burden on the user. Must
+ * not be used for focusable elements (such as links and form elements) as this
+ * causes issues for keyboard only or voice recognition users. "!important" is
+ * used to prevent unintentional overrides.
+ */
+.element-invisible {
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+
+/* $Id: block-editing.css,v 1.3 2009/11/05 14:01:26 johnalbin Exp $ */
+
+/**
+ * @file
+ * Zen's rollover edit links for blocks.
+ */
+
+
+div.block.with-block-editing {
+  position: relative;
+}
+
+div.block.with-block-editing div.edit {
+  display: none;
+  position: absolute;
+  right: 0; /* LTR */
+  top: 0;
+  z-index: 40;
+  border: 1px solid #eee;
+  padding: 0 2px;
+  font-size: 0.75em;
+  background-color: #fff;
+}
+
+div.block.with-block-editing:hover div.edit {
+  display: block;
+}
+
+
+/* $Id: blocks.css,v 1.4 2009/11/05 11:05:39 johnalbin Exp $ */
+
+/**
+ * @file
+ * Block Styling
+ */
+
+
+.block /* Block wrapper */ {
+  margin-bottom: 0;
+}
+
+.block.region-odd /* Zebra striping for each block in the region */ {
+}
+
+.block.region-even /* Zebra striping for each block in the region */ {
+}
+
+.block.odd /* Zebra striping independent of each region */ {
+}
+
+.block.even /* Zebra striping independent of each region */ {
+}
+
+.region-count-1 /* Incremental count for each block in the region */ {
+}
+
+.count-1 /* Incremental count independent of each region */ {
+}
+
+.block h2.title /* Block title */ {
+}
+
+.block .content /* Block's content wrapper */ {
+}
+
+#block-aggregator-category-1 /* Block for the latest news items in the first category */ {
+}
+
+#block-aggregator-feed-1 /* Block for the latest news items in the first feed */ {
+}
+
+#block-block-1 /* First administrator-defined block */ {
+}
+
+#block-blog-0 /* "Recent blog posts" block */ {
+}
+
+#block-book-0 /* "Book navigation" block for the current book's table of contents */ {
+}
+
+#block-comment-0 /* "Recent comments" block */ {
+}
+
+#block-forum-0 /* "Active forum topics" block */ {
+}
+
+#block-forum-1 /* "New forum topics" block */ {
+}
+
+#block-menu-primary-links /* "Primary links" block */ {
+}
+
+#block-menu-secondary-links /* "Secondary links" block */ {
+}
+
+#block-node-0 /* "Syndicate" block for primary RSS feed */ {
+}
+
+#block-poll-0 /* "Most recent poll" block */ {
+}
+
+#block-profile-0 /* "Author information" block for the profile of the page's author */ {
+}
+
+#block-search-0 /* "Search form" block */ {
+}
+
+#block-statistics-0 /* "Popular content" block */ {
+}
+
+#block-user-0 /* "User login form" block */ {
+}
+
+#block-user-1 /* "Navigation" block for Drupal navigation menu */ {
+}
+
+#block-user-2 /* "Who's new" block for a list of the newest users */ {
+}
+
+#block-user-3 /* "Who's online" block for a list of the online users */ {
+}
+
+#block-block-8,
+#block-block-9,
+#block-block-10,
+#block-block-11,
+#block-block-12,
+#block-block-13,
+#block-block-16 {
+display: block;
+width: 680px;
+height: 140px;
+}
+
+#block-block-8 div.content,
+#block-block-9 div.content,
+#block-block-10 div.content,
+#block-block-11 div.content,
+#block-block-12 div.content,
+#block-block-13 div.content,
+#block-block-16 div.content {
+position: relative;
+}
+
+
+/* $Id: navigation.css,v 1.5 2009/11/04 19:42:41 johnalbin Exp $ */
+
+/**
+ * @file
+ * Navigation Styling
+ */
+
+
+/*
+ * The active item in a Drupal menu
+ */
+li a.active {
+  color: #000;
+}
+
+/*
+ * Navigation bar
+ */
+#navigation {
+	margin:0;
+	float:none;
+	display:block;
+}
+
+.region-navigation {
+}
+
+/*
+ * Primary and Secondary menu links
+ */
+#main-menu {
+}
+
+#secondary-menu {
+}
+
+/*
+ * Menu blocks
+ */
+.block-menu {
+}
+
+/*
+ * "Menu block" blocks. See http://drupal.org/project/menu_block
+ */
+.block-menu_block {
+}
+
+
+/* $Id: panels-styles.css,v 1.1.2.1 2009/12/12 15:31:54 johnalbin Exp $ */
+
+/**
+ * @file
+ * Panels Styling
+ */
+
+
+/* $Id: views-styles.css,v 1.1 2009/08/12 04:25:15 johnalbin Exp $ */
+
+/**
+ * @file
+ * Views Styling
+ */
+
+
+/* $Id: nodes.css,v 1.6 2009/11/02 15:37:29 johnalbin Exp $ */
+
+/**
+ * @file
+ * Node Styling
+ *
+ * Style anything that isn't in the $content variable.
+ */
+
+
+.node /* Node wrapper */ {
+}
+
+.node-sticky /* A sticky node (displayed before others in a list) */ {
+}
+
+.node-unpublished /* Unpublished nodes */ {
+  /* background-color: #fff4f4; */ /* Drupal core uses a #fff4f4 background */
+}
+
+.node-unpublished div.unpublished,
+.comment-unpublished div.unpublished /* The word "Unpublished" displayed underneath the content. */ {
+  height: 0;
+  overflow: visible;
+  color: #d8d8d8;
+  font-size: 75px;
+  line-height: 1;
+  font-family: Impact, "Arial Narrow", Helvetica, sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  word-wrap: break-word; /* A very nice CSS3 property */
+}
+
+.node-by-viewer /* A node created by the current user */ {
+}
+
+.node-teaser /* A node displayed as teaser */ {
+}
+
+/* All nodes are given a node-type-FOO class that describes the type of
+ * content that it is. If you create a new content type called
+ * "my-custom-type", it will receive a "node-type-my-custom-type" class.
+ */
+.node-type-page /* Page content node */ {
+}
+
+.node-type-story /* Story content node */ {
+}
+
+.node h2.title /* Node title */ {
+}
+
+.marker /* "New" or "Updated" marker for content that is new or updated for the current user */ {
+  color: #c00;
+}
+
+.node .picture /* The picture of the node author */ {
+}
+
+.node.node-unpublished .picture,
+.comment.comment-unpublished .picture {
+  position: relative; /* Otherwise floated pictures will appear below the "Unpublished" text. */
+}
+
+.node .meta /* Wrapper for submitted and terms data */ {
+font-weight: bold;
+margin-top: 5px;
+}
+
+.node .submitted /* The "posted by" information */ {
+color: #999;
+}
+
+.node .terms /* Node terms (taxonomy) */ {
+float: right;
+}
+
+.node .content /* Node's content wrapper */ {
+}
+
+.node ul.links /* Node links. See also the ul.links declaration in the pages.css. */ {
+}
+
+.preview .node /* Preview of the content before submitting new or updated content */ {
+  /* background-color: #ffffea; */ /* Drupal core uses a #ffffea background */
+}
+
+
+/* $Id: comments.css,v 1.5 2009/11/01 20:54:20 johnalbin Exp $ */
+
+/**
+ * @file
+ * Comment Styling
+ */
+
+
+#comments /* Wrapper for the list of comments and its title */ {
+  margin: 1em 0;
+}
+
+#comments h2 {
+color: #006699;
+}
+
+#comments .title /* Heading for the list of comments */ {
+}
+
+.comment /* Wrapper for a single comment */ {
+padding: 10px;
+border: 1px solid #ccc;
+margin-bottom: 10px;
+}
+
+.comment-preview /* Preview of the comment before submitting new or updated comment */ {
+}
+
+.comment.new /* A new comment since the user last viewed the page. */ {
+}
+
+.comment.first /* The first comment in the list of comments */ {
+}
+
+.comment.last /* The last comment in the list of comments */ {
+}
+
+.comment.odd /* An odd-numbered comment in the list of comments */ {
+}
+
+.comment.even /* An even-numbered comment in the list of comments */ {
+}
+
+.comment-unpublished /* Unpublished comments */ {
+  /* background-color: #fff4f4; */ /* Drupal core uses a #fff4f4 background */
+}
+
+.comment-unpublished div.unpublished /* The word "Unpublished" displayed underneath the content. See also the div.unpublished declaration in the nodes.css. */ {
+}
+
+.comment-by-anonymous /* A comment created by an anonymous user */ {
+}
+
+.comment-by-node-author /* A comment created by the node's author */ {
+}
+
+.comment-by-viewer /* A comment created by the current user */ {
+}
+
+.comment h3.title /* Comment title */ {
+}
+
+.new /* "New" marker for comments that are new for the current user */ {
+  color: #c00;
+}
+
+.comment .picture /* The picture of the comment author */ {
+}
+
+.comment .submitted /* The "posted by" information */ {
+font-weight: bold;
+}
+
+.comment .content /* Comment's content wrapper */ {
+}
+
+.comment .user-signature /* The user's signature */ {
+}
+
+.comment ul.links /* Comment links. See also the ul.links declaration in the pages.css. */ {
+margin:0;
+}
+
+.indented /* Nested comments are indented */ {
+  /* margin-left: 25px; */ /* Drupal core uses a 25px left margin */
+}
+
+.preview .comment /* Preview of the comment before submitting new or updated comment */ {
+  /* background-color: #ffffea; */ /* Drupal core uses a #ffffea background */
+}
+
+
+/* $Id: forms.css,v 1.3 2009/08/12 08:37:42 johnalbin Exp $ */
+
+/**
+ * @file
+ * Form Styling
+ */
+
+
+.form-item,
+.form-checkboxes,
+.form-radios /* Wrapper for a form element (or group of form elements) and its label */ {
+  margin: .5em 0;
+}
+
+.form-item input.error,
+.form-item textarea.error,
+.form-item select.error /* Highlight the form elements that caused a form submission error */ {
+  border: 2px solid #c00;
+}
+
+.form-item label /* The label for a form element */ {
+  display: block;
+  font-weight: bold;
+}
+
+.form-item label.option /* The label for a radio button or checkbox */ {
+  display: inline;
+  font-weight: normal;
+}
+
+.form-required /* The part of the label that indicates a required field */ {
+  color: #c00;
+}
+
+.form-item .description /* The descriptive help text (separate from the label) */ {
+  font-size: 0.85em;
+}
+
+.form-checkboxes .form-item,
+.form-radios .form-item /* Pack groups of checkboxes and radio buttons closer together */ {
+  margin: 0.4em 0;
+}
+
+.form-submit /* The submit button */ {
+}
+
+.container-inline div,
+.container-inline label /* Inline labels and form divs */ {
+  display: inline;
+}
+
+.tips /* Tips for Drupal's input formats */ {
+}
+
+
+/*
+ * Search (search-theme-form.tpl.php)
+ */
+#search-box /* Wrapper for the search form */ {
+}
+
+#edit-search-theme-form-1-wrapper label /* Label that says "Search this site:" */ {
+  display: none;
+}
+
+
+/*
+ * Search (search-block-form.tpl.php)
+ */
+#search-block-form /* Wrapper for the search form */ {
+}
+
+#edit-search-block-form-1-wrapper label /* Label that says "Search this site:" */ {
+  display: none;
+}
+
+
+/*
+ * Drupal's default login form block
+ */
+#user-login-form {
+  text-align: left; /* LTR */
+}
+
+
+/*
+ * OpenID
+ *
+ * The default styling for the OpenID login link seems to assume Garland's
+ * styling of list items.
+ */
+
+#user-login-form ul /* OpenID creates a new ul above the login form's links. */ {
+  margin-bottom: 0; /* Position OpenID's ul next to the rest of the links. */
+}
+
+#user-login-form li.openid-link /* The "Log in using OpenID" link. */ {
+  margin-top: 1em;
+  margin-left: -20px; /* LTR */ /* Un-do some of the padding on the ul list. */
+}
+
+#user-login-form li.user-link /* The "Cancel OpenID login" link. */ {
+  margin-top: 1em;
+}
+
+#user-login ul {
+  margin: 1em 0;
+}
+
+#user-login li.openid-link,
+#user-login li.user-link /* The OpenID links on the /user form. */ {
+  margin-left: -2em; /* LTR */ /* Un-do all of the padding on the ul list. */
+}
+
+
+/*
+ * Drupal admin tables
+ *
+ * We overrode these styles in html-elements.css, but restore them for the admin
+ * section of the site.
+ */
+
+form tbody {
+  border-top: 1px solid #ccc;
+}
+
+form th,
+form thead th {
+  text-align: left; /* LTR */
+  padding-right: 1em; /* LTR */
+  border-bottom: 3px solid #ccc;
+}
+
+form tbody th {
+  border-bottom: 1px solid #ccc;
+}
+
+
+/* $Id: fields.css,v 1.3 2009/08/12 08:03:52 johnalbin Exp $ */
+
+/**
+ * @file
+ * Field Styling
+ */
+
+
+/*
+ * Field types
+ */
+
+.field /* Wrapper for any CCK field. */ {
+}
+
+.field-type-datetime /* Always use "datetime" when creating new CCK date fields. "date" and "datestamp" are legacy types. */ {
+}
+
+.field-type-filefield /* Field from filefield module */ {
+}
+
+.field-type-nodereference {
+}
+
+.field-type-number-decimal {
+}
+
+.field-type-number-float {
+}
+
+.field-type-number-integer {
+}
+
+.field-type-text {
+}
+
+.field-type-userreference {
+}
+
+
+/*
+ * Named fields
+ */
+
+.field-field-FIELDNAME /* Underscores in field name are replaced with dashes. */ {
+}
+
+
+
+/* Forum Styles */
+
+div#forum table {
+width:100%;
+}
+
+div#forum tr.even, div#forum tr.odd {
+background-color:#fff;
+border-bottom:1px dotted #CCCCCC;
+padding:0.1em 0.6em;
+}
+
+div#forum tr.odd {
+background-color:#efefef;
+border-bottom:1px dotted #CCCCCC;
+padding:0.1em 0.6em;
+}
+
+div#forum ul.links {
+margin:0;
+padding:0;
+}
+
+div#forum thead {
+border-bottom: 4px solid #ccc;
+}
+
+.forum-topic-navigation .topic-next {
+float:right;
+text-align:right;
+width:46%;
+font-size: .875em;
+font-weight: bold;
+} 
+
+.forum-topic-navigation .topic-previous {
+float:left;
+text-align:left;
+width:46%;
+font-size: .875em;
+font-weight: bold;
+}
+
+.forum-topic-navigation  {
+border-bottom:1px dashed #CCCCCC;
+border-top:1px dashed #CCCCCC;
+padding:0.5em;
+margin: 0.5em 0;
+text-align:center;
+}
+
+#forum td.created, #forum td.posts, #forum td.topics, #forum td.last-reply, #forum td.replies, #forum td.pager {
+font-size:0.875em;
+white-space:nowrap;
+}
+
+#forum td.icon {
+padding-left: 5px;
+}
+
+#forum td.icon img {
+vertical-align: middle;
+}
+
+/*
+ * Forum Links
+ *
+ * The order of link states are based on Eric Meyer's article:
+ * http://meyerweb.com/eric/thoughts/2007/06/11/who-ordered-the-link-states
+ */
+ 
+div#forum a:link {
+	font-weight: bold;
+}
+
+div#forum a:visited {
+	font-weight: bold;
+}
+
+div#forum a:hover,
+div#forum a:focus {
+}
+
+div#forum a:active {
+}
+
+div#forum th a:link {
+color: #000;
+}
+
+#forum tr td.forum {
+  background-image: url(/sites/default/files/forum/forum-default.png);
+}
+#forum tr.new-topics td.forum {
+  background-image: url(/sites/default/files/forum/forum-new.png);
+}
+
+/* Jobs listing */
+
+.view-jobs-list .views-row {
+	border: 1px solid #ccc;
+    padding: 10px;
+	margin-bottom:10px;
+}
+
+.view-jobs-list h2 {
+	margin: 0;
+}
+
+.jobs_date_posted {
+	margin: 0;
+}
+
+.jobs_organization {
+	font-weight: bold;
+    margin-top: 0;
+}
+
+.application_deadline {
+	margin-bottom: 0;
+    font-style: italic;
+	clear:both;
+}
+
+.read_more {
+	float:right;
+	margin-right: 30px;
+}
+
+/* Resources */
+
+table.views-table {
+font-size: .875em;
+width: 100%;
+}
+
+table.views-table tr.even {
+background-color:#fff;
+border-bottom:1px dotted #CCCCCC;
+padding:0.1em 0.6em;
+}
+
+table.views-table  tr.odd {
+background-color:#eee;
+border-bottom:1px dotted #CCCCCC;
+padding:0.1em 0.6em;
+}
+
+table.views-table th.views-field {
+padding-right: 10px;
+}
+
+table.views-table th {
+color: #000;
+}
+
+table.views-table th a {
+color: #000;
+}
+
+table.views-table td {
+padding-left: 5px;
+}
+
+table.views-table td.active {
+background: none;
+}
+
+table.views-table td.views-field-title {
+font-weight: bold;
+}
+
+/* External Events */
+
+div.view-events-external .views-row {
+margin-bottom: 1em;
+}
+
+div.view-events-external .views-field-title {
+font-weight: bold;
+}
+
+div.view-events-external .views-row p {
+margin: 0;
+}
+
+div.view-events-external .views-field-field-start-date-value {
+font-style: italic;
+color: #666;
+}
+
+/* Admin Dashboard Styles */
+
+#dashboard_col1 {
+	float:left;
+	width: 48%;
+}
+
+#dashboard_col2 {
+	float: right;
+	width: 48%;
+}
+
+.dashboard_item {
+	margin-bottom: 28px;
+}
+
+.dashboard_item img {
+	float: left;
+}
+
+.dashboard_item p, .dashboard_item h2 {
+	margin-left: 40px;
+}	
+
+.dashboard_item p {
+	margin-top: 0;
+	margin-bottom: 0;
+	font-size: 90%;
+}
+
+.dashboard_item h2 {
+	margin-bottom: 0px;
+}
+
+.dashboard_item ul {
+	margin: 0 0 6px 40px;
+	font-size: 90%;
+}
+
+/* Nav menu styles */
+
+#main-menu {
+	margin:2px 0 0 10px;
+}
+
+#main-menu li {
+	margin-right: 4px;
+	padding:0;
+}
+
+/*
+#main-menu li a{
+	float:left;
+	display:block;
+	line-height:12px;
+	height:12px;
+	font-size:12px;
+	padding:17px 26px 15px;
+	background:url(../images/nav-tab.png) left top repeat-x;
+	border-top:1px solid #4f6899;
+	border-right:1px solid #4f6899;
+	border-left:1px solid #7f8aaf;
+	color:#fff;
+}
+*/
+
+	#main-menu li a:active, #main-menu li a:visited {
+	}
+
+#subnavigation {
+	background: url(../images/secondary-nav-bg.png) left top repeat-x;
+	margin: 4px 9px 0px 10px;
+	padding: 10px 0px 5px 0px;
+	height:36px;
+}
+
+#secondary-menu {
+	margin: 0;
+	padding: 8px 0px;
+}
+
+	#secondary-menu li {
+		display:inline;
+		float:left;
+		margin-right:5px;
+		font-weight: bold;
+	}
+
+		#secondary-menu li a {
+			font-size:14px;
+			color:#000;
+		}
+		
+		.section-about-us #secondary-menu li a {
+			font-size:12px;
+			color:#000;
+		}
+		
+		.section-human-rights-funding #secondary-menu li a {
+			font-size:11px;
+			color:#000;
+		}
+		
+		#secondary-menu li.active-trail {
+			/* text-decoration: underline; */
+		}
+		
+		#secondary-menu li a.active {
+		color: #0E4D85;
+		border-bottom: 3px solid #0E4D85;
+		text-decoration: none;
+		}
+		
+		#secondary-menu li a:hover {
+		color: #0E4D85;
+		text-decoration: none;
+		}
+
+/* specific blocks */
+
+.view-header-slideshow{
+	position:relative;
+	height:280px;
+}
+
+#block-views-sidebar_calendar-block_1{
+	padding:15px 30px 15px 64px;
+	background:url(../images/calendar-icon.png) 10px 15px no-repeat;
+}
+
+	#block-views-sidebar_calendar-block_1 h2.title{
+		font-size:14px;
+		color:#000;
+		font-weight:normal;
+		border-bottom:none;
+	}
+
+		#block-views-sidebar_calendar-block_1 .views-field-field-start-date-value {
+			color:#0e4d85;
+			font-size:12px;
+			font-style:italic;
+		}
+
+		#block-views-sidebar_calendar-block_1 .views-field-title a {
+			color:#0e4d85;
+			font-size:12px;
+			font-weight:bold;
+		}
+		
+#block-block-24 {
+	padding:0px 30px 15px 64px;
+	background:url(../images/small_globe2.png) 14px 0px no-repeat;
+}
+		
+.sidebar-social-media{
+	/*height:32px;*/
+}
+
+.sidebar-social-media-icons{
+	float:left;
+	padding:6px 0;
+	height:20px;
+	width:60px;
+	display:block;
+	margin-left: 10px;
+}
+
+	.sidebar-social-media-icons img{
+		margin-right:5px;
+	}
+	
+.sidebar-social-media-text{
+	float:left;
+	display:block;
+	font-size:12px;
+	height:32px;
+	width:116px;
+}
+
+.region-sidebar-second .section .constant-contact-signup{
+	padding:20px 10px 20px 52px;
+	background:#e6e6e5 url(../images/newsletter-icon.png) 8px center no-repeat;
+}	
+	
+	.constant-contact-signup .form-text{
+		border:1px solid #808080;
+		height:12px;
+		line-height:12px;
+		font-size:12px;
+		text-align:right;
+		padding:4px;
+		background:#fff;
+		color:#333;
+		width:132px;
+	}
+
+	.constant-contact-signup .form-submit{
+		background:url(../images/newsletter-go.png) left top no-repeat;
+		width:23px;
+		height:22px;
+		border:none;
+		cursor:pointer;
+		text-indent:-9999px;
+		vertical-align:bottom;
+		font-size:0;
+		line-height:0;
+	}
+
+.region-sidebar-second .section .action-alerts{
+	padding:0;
+}
+	
+.action-alerts h2.title{
+	background:#b73b3c;
+	font-size:13px;
+	font-weight:normal;
+	color:#fff;
+	text-transform:uppercase;
+	padding:4px 8px;
+	width:50%;
+	margin:15px 15px 0 15px;
+}
+
+.action-alerts .content{
+	padding: 0px 15px 15px 15px;
+	border-top:1px solid #666;
+}
+
+div#block-block-18, 
+div#block-block-21 {
+padding: 10px;
+margin: 10px;
+border-bottom: 1px solid #949090;
+}
+
+div#block-block-22 {
+padding: 10px;
+margin: 10px;
+border: none;
+}
+
+div#block-block-18 h2.title,
+div#block-block-21 h2.title,
+div#block-block-22 h2.title {
+border: none;
+color: #3D6F0C;
+margin-bottom: 0;
+}
+
+div#block-block-18 div.content {
+}
+
+
+
+/* Skinr Generated Styles */
+
+.sidebar-arrow-menu{
+	padding:0px !important;
+}
+
+	.sidebar-arrow-menu ul{
+		list-style:none;
+		margin:0;
+		padding:0;
+	}
+	
+		.sidebar-arrow-menu ul li{
+			padding:0;
+			margin:0;
+			border-bottom:1px solid #a1a1a1;
+		}
+		
+			.sidebar-arrow-menu ul li a{
+				display:block;
+				color:#333;
+				text-decoration:none;
+				padding:20px 20px 20px 60px;
+				background:url(../images/sidebar-arrow.png) 20px center no-repeat;
+			}
+			
+			.sidebar-arrow-menu ul li a:hover {
+				text-decoration:underline;
+			}
+			
+.yellow-block{
+	padding:0 !important;
+	background:#fbf2d0;
+}
+
+	.yellow-block h2.title{
+		color:#0e4d85;
+		font-weight:bold;
+		border-bottom:1px solid #a1a1a1;
+		padding:15px 10px 10px 10px;
+		margin:0;
+	}
+
+	.yellow-block .content{
+		padding:10px;
+	}
+
+		.yellow-block .content p{
+			margin:0;
+		}
+		
+		
+/* Rix image replacement technique -> main menu */
+
+li.menu-233 {
+height:44px;
+margin:0;
+padding:0;
+width:94px;
+}
+
+li.menu-233 a, li.menu-233 a:link {
+display:block;
+height:44px;
+margin:0;
+padding:0;
+text-indent:-9999px;
+width:94px;
+background: url(../images/ihrfg-main-menu.png) 0 0 no-repeat;
+}
+
+li.menu-233 a:hover, li.menu-233 a.active {
+background: url(../images/ihrfg-main-menu.png) 0 -44px no-repeat;
+}
+
+li.menu-241 {
+height:44px;
+margin:0;
+padding:0;
+width:206px;
+}
+
+li.menu-241 a, li.menu-241 a:link {
+display:block;
+height:44px;
+margin:0;
+padding:0;
+text-indent:-9999px;
+width:206px;
+background: url(../images/ihrfg-main-menu.png) -99px 0 no-repeat;
+}
+
+li.menu-241 a:hover, li.menu-241 a.active {
+background: url(../images/ihrfg-main-menu.png) -99px -44px no-repeat;
+}
+
+li.menu-247 {
+height:44px;
+margin:0;
+padding:0;
+width:222px;
+}
+
+li.menu-247 a, li.menu-247 a:link {
+display:block;
+height:44px;
+margin:0;
+padding:0;
+text-indent:-9999px;
+width:222px;
+background: url(../images/ihrfg-main-menu.png) -310px 0 no-repeat;
+}
+
+li.menu-247 a:hover, li.menu-247 a.active {
+background: url(../images/ihrfg-main-menu.png) -310px -44px no-repeat;
+}
+
+li.menu-257 {
+height:44px;
+margin:0;
+padding:0;
+width:169px;
+}
+
+li.menu-257 a, li.menu-257 a:link {
+display:block;
+height:44px;
+margin:0;
+padding:0;
+text-indent:-9999px;
+width:169px;
+background: url(../images/ihrfg-main-menu.png) -537px 0 no-repeat;
+}
+
+li.menu-257 a:hover, li.menu-257 a.active {
+background: url(../images/ihrfg-main-menu.png) -537px -44px no-repeat;
+}
+
+li.menu-261 {
+height:44px;
+margin:0;
+padding:0;
+width:125px;
+}
+
+li.menu-261 a, li.menu-261 a:link {
+display:block;
+height:44px;
+margin:0;
+padding:0;
+text-indent:-9999px;
+width:125px;
+background: url(../images/ihrfg-main-menu.png) -711px 0 no-repeat;
+}
+
+li.menu-261 a:hover, li.menu-261 a.active {
+background: url(../images/ihrfg-main-menu.png) -711px -44px no-repeat;
+}
+
+li.menu-264 {
+height:44px;
+margin:0;
+padding:0;
+width:104px;
+}
+
+li.menu-264 a, li.menu-264 a:link {
+display:block;
+height:44px;
+margin:0;
+padding:0;
+text-indent:-9999px;
+width:104px;
+background: url(../images/ihrfg-main-menu.png) -841px 0 no-repeat;
+}
+
+li.menu-264 a:hover, li.menu-264 a.active {
+background: url(../images/ihrfg-main-menu.png) -841px -44px no-repeat;
+}
+
+
+/* funder details */
+
+#node-63 legend {
+color: #0E4D85;
+}
+
+.node-type-funder div.field-container {
+clear: both;
+padding: 10px 0;
+}
+
+.node-type-funder div.field-label {
+display: block;
+float: left;
+width: 150px;
+text-align: left;
+font-weight: bold;
+}
+
+.node-type-funder div.field-content {
+display: block;
+float: left;
+margin-left: 10px;
+}
+
+.view_button {
+	display: block;
+	width: auto;
+	float:right;
+	padding: 4px 8px;
+	background: #0a4d86;
+	margin-top: 0;
+}
+
+.view_button a {
+	color: #fff;
+}
+
+a.viewheader_button, a.viewheader_button:link {
+background:none repeat scroll 0 0 #0A4D86;
+color:#FFFFFF;
+display:block;
+float:left;
+margin-bottom:20px;
+margin-top:0;
+padding:4px 8px;
+position:absolute;
+right:0;
+top:0;
+width:auto;
+}
+
+.view-header {
+position: relative;
+margin-bottom: 20px;
+}
+
+
+
+/* Admin Dashboard Styles */
+
+#dashboard {
+	padding: 5px;
+}
+
+#dashboard_col1 {
+	float:left;
+	width: 48%;
+}
+
+#dashboard_col2 {
+	float: right;
+	width: 48%;
+}
+
+.dashboard_item {
+	margin-bottom: 28px;
+}
+
+.dashboard_item img {
+	float: left;
+}
+
+.dashboard_item p, .dashboard_item h2 {
+	margin-left: 40px;
+}	
+
+.dashboard_item p {
+	margin-top: 0;
+	margin-bottom: 0;
+	font-size: 90%;
+}
+
+.dashboard_item h2 {
+	margin-bottom: 0px;
+}
+
+.dashboard_item ul {
+	margin: 0 0 6px 40px;
+	font-size: 90%;
+}
+
+.view-front-ihrfg-updates .views-field-field-start-date-value {
+	margin-bottom: 12px;
+}
+
+.view-dom-id-1 p {
+	margin-top: 0;
+}
+
+.view-dom-id-1 h2 {
+	margin-bottom: 0;
+}
+
+.view-sidebar-calendar .view-header p {
+	margin-top: 0;
+}
+
+/* Padding for block above login form */
+#block-block-17 {
+	padding: 5px 10px 10px 20px;
+}
+
+
+/* Profile pages */
+
+div.node-type-funder ul.links.inline {
+display:block;
+position:absolute;
+right:290px;
+top:230px;
+}
+
+/* Menu Blocks for footer */
+
+div#block-menu_block-1,
+div#block-menu_block-2,
+div#block-menu_block-3,
+div#block-menu_block-4,
+div#block-menu_block-5,
+div#block-menu_block-6 {
+float: left;
+display: block;
+width: 640px;
+margin: 10px 20px;
+}
+
+div#block-block-20 {
+clear:both;
+float:left;
+margin-top:20px;
+padding:5px;
+width:650px;
+}
+
+div#footer {
+clear:both;
+font-size:12px;
+margin:0;
+overflow:hidden;
+padding:0 10px;
+width:655px;
+}
+
+div#footer h2.title {
+font-size: 12px;
+}
+
+div#footer ul.menu {
+margin: 0px;
+padding: 0px;
+}
+
+div#footer li.leaf {
+font-size: 12px;
+list-style: none;
+margin: 0;
+padding: 0;
+}
+
+div#fcontact-address {
+display:block;
+float:left;
+width:auto;
+}
+
+div#fcontact-email {
+display:block;
+float:right;
+text-align:right;
+width:auto;
+}
+
+div#flinks {
+clear:both;
+display:block;
+padding-top:20px;
+margin-bottom: 20px;
+text-align: center;
+width:650px;
+}
+
+/* user registration */
+
+#edit-profile-name-wrapper div.description,
+#edit-profile-organization-wrapper div.description,
+#edit-profile-title-wrapper div.description {
+display: none;
+}
+
+
+/* member area */
+
+p#cc_more {
+display: block;
+margin-top: 10px;
+font-size: 12px;
+}
+
+/* Search Blocks */
+#block-views--exp-funders_search-default, #block-block-23 {
+margin: 0px 10px;
+padding: 0px 10px;
+}
+
+.views-exposed-form .views-exposed-widget {
+float: none;
+}
+
+/* Knowledge Database Fieldset */
+.element-invisible {
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+fieldset
+{
+    padding:0 10px 10px 0px;
+    color:#4A4A4A;
+    border:none;
+}
+
+.fieldset-outer {
+    background:#f0f0e6;
+    border:1px solid #BBBBBB;
+    overflow:visible;
+    margin-bottom:10px;
+    margin-top:10px;
+    clear:both;
+}
+
+.view-knowledge-database legend { font-size: 110%; }
+
+.view-knowledge-database  .fieldset-wrapper {
+  margin-left: 8px;
+  padding-top: 8px;
+}
+
+.view-knowledge-database  fieldset.collapsed {
+  padding: 0 10px 10px 0px;
+}
+
+.view-knowledge-database  fieldset {
+  padding: 0 10px 0px 0px;
+  color: #4A4A4A;
+  border: none;
+  margin-top: 6px;
+}
+
+.view-knowledge-database  .fieldset-wrapper .views-row {
+  padding-top: 1em;
+}
+
+.view-knowledge-database .fieldset-wrapper .views-row-first {
+  padding-top: 0;
+}
+
+.fieldset-wrapper .views-field-teaser .field-content p {
+  margin-top: 0;
+}
+
+.fieldset-wrapper ul {
+  margin: .5em 0 0 0;
+}
+
+/* Hide print links on knowledge center entries. Doing this through CSS because fixing normally would be editing 250 nodes */
+.node-type-knowledge-database .print_html {
+  display: none;
+}
+
+/*
+#block-menu-menu-tfs-admin-menu {
+  margin-top: 40px;
+}
+
+*/
+.blog-sidebar-block {
+  font-size: 90%;
+  padding-left: 10px;
+  padding-top:24px;
+}
+
+.blog-sidebar-block a {
+  color: #0E4D85;
+}
+
+.view-front-funder-news .view-content .views-row {
+  margin-bottom: 14px;
+}
+
+.member-area-newsletter-panel h2.title {
+  display: none;
+}
+
+form#user-login .description {
+  display: none;
+}
+
+.page-user-register .tabs ul.primary li.tabid2 a .tab {
+  background: url("../images/tab-right-green.png") no-repeat scroll right -38px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-register .tabs ul.primary li.tabid3 a .tab {
+  background: url("../images/tab-right-gray.png") no-repeat scroll right -38px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-register .tabs ul.primary li.tabid2 a:hover .tab {
+  background: url("../images/tab-right-green.png") no-repeat scroll right -76px transparent;
+  color: #000000;
+}
+
+.page-user-register .tabs ul.primary li.tabid3 a:hover .tab {
+  background: url("../images/tab-right-gray.png") no-repeat scroll right -76px transparent;
+  color: #000000;
+}
+
+.page-user-register .tabs ul.primary li.tabid2 a {
+  background: url("../images/tab-left-green.png") no-repeat scroll left -38px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-register .tabs ul.primary li.tabid3 a {
+  background: url("../images/tab-left-gray.png") no-repeat scroll left -38px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-register .tabs ul.primary li.tabid2 a:hover {
+  background: url("../images/tab-left-green.png") no-repeat scroll left -76px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-register .tabs ul.primary li.tabid3 a:hover {
+  background: url("../images/tab-left-gray.png") no-repeat scroll left -76px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-login .tabs ul.primary li.tabid1 a .tab, .page-user .tabs ul.primary li.tabid1 a .tab {
+  background: url("../images/tab-right-blue.png") no-repeat scroll right -38px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-login .tabs ul.primary li.tabid3 a .tab, .page-user .tabs ul.primary li.tabid3 a .tab {
+  background: url("../images/tab-right-gray.png") no-repeat scroll right -38px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-login .tabs ul.primary li.tabid1 a:hover .tab, .page-user .tabs ul.primary li.tabid1 a:hover .tab {
+  background: url("../images/tab-right-blue.png") no-repeat scroll right -76px transparent;
+  color: #000000;
+}
+
+.page-user-login .tabs ul.primary li.tabid3 a:hover .tab, .page-user .tabs ul.primary li.tabid3 a:hover .tab {
+  background: url("../images/tab-right-gray.png") no-repeat scroll right -76px transparent;
+  color: #000000;
+}
+
+.page-user-login .tabs ul.primary li.tabid1 a, .page-user .tabs ul.primary li.tabid1 a {
+  background: url("../images/tab-left-blue.png") no-repeat scroll left -38px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-login .tabs ul.primary li.tabid3 a, .page-user .tabs ul.primary li.tabid3 a {
+  background: url("../images/tab-left-gray.png") no-repeat scroll left -38px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-login .tabs ul.primary li.tabid1 a:hover, .page-user .tabs ul.primary li.tabid1 a:hover {
+  background: url("../images/tab-left-blue.png") no-repeat scroll left -76px transparent;
+  color: #000000;
+}
+
+.page-user-login .tabs ul.primary li.tabid3 a:hover, .page-user .tabs ul.primary li.tabid3 a:hover {
+  background: url("../images/tab-left-gray.png") no-repeat scroll left -76px transparent;
+  color: #000000;
+}
+
+.page-user-password .tabs ul.primary li.tabid1 a .tab {
+  background: url("../images/tab-right-blue.png") no-repeat scroll right -38px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-password .tabs ul.primary li.tabid2 a .tab {
+  background: url("../images/tab-right-green.png") no-repeat scroll right -38px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-password .tabs ul.primary li.tabid1 a:hover .tab {
+  background: url("../images/tab-right-blue.png") no-repeat scroll right -76px transparent;
+  color: #000000;
+}
+
+.page-user-password .tabs ul.primary li.tabid2 a:hover .tab {
+  background: url("../images/tab-right-green.png") no-repeat scroll right -76px transparent;
+  color: #000000;
+}
+
+.page-user-password .tabs ul.primary li.tabid1 a {
+  background: url("../images/tab-left-blue.png") no-repeat scroll left -38px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-password .tabs ul.primary li.tabid2 a {
+  background: url("../images/tab-left-green.png") no-repeat scroll left -38px transparent;
+  color: #FFFFFF;
+}
+
+.page-user-password .tabs ul.primary li.tabid1 a:hover {
+  background: url("../images/tab-left-blue.png") no-repeat scroll left -76px transparent;
+  color: #000000;
+}
+
+.page-user-password .tabs ul.primary li.tabid2 a:hover {
+  background: url("../images/tab-left-green.png") no-repeat scroll left -76px transparent;
+  color: #000000;
+}
+
+#block-block-25 .content { /* create user account helper text area */
+  margin: 0;
+  padding: 0 0 5px 20px;
+}
+
+#terms-of-use {
+  display: none;
+}

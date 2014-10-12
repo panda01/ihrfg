@@ -1,0 +1,14 @@
+; $Id $
+name = Whizzywig
+description = "Enables whizzywig editor. Fastest and smallest WYSIWYG editor but features rich. Including Image Browser, resize image, rename image, and create Sub-folder."
+package = "Easy Module"
+project = "whizzywig"
+core = "6.x"
+version = "6.x-2.0-beta6"
+
+; Information added by drupal.org packaging script on 2010-11-09
+version = "6.x-2.0-beta6"
+core = "6.x"
+project = "whizzywig"
+datestamp = "1289283347"
+

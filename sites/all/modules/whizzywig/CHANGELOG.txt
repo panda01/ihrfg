@@ -1,0 +1,104 @@
+6.x-1.0-ALPHA1: First version of whizzywig for Drupal 6
+
+6.x-1.0-ALPHA2: New: Built in Image Browser
+                New: Upgrade Whizzywig library to v57
+                
+6.x-1.0-ALPHA3: Bug fix: Load default value of "Allowed upload file extensions"
+
+6.x-1.0-ALPHA4: Bug fix: rename list_dir() to whizzywig_list_dir()
+                Bug fix: "Allowed upload file extensions"
+                New: use "gif jpg" instead of ".gif .jpg" to follow CCK rule for file extension naming
+                
+6.x-1.0-BETA1: Bug fix: Insert image for separated Teaser and Body (using excerpt)
+               Bug fix: strtolower() when checking file extension
+               Bug fix: Revise instruction on Settings page, ".gif .jpg" to "gif jpg"
+               
+6.x-1.0-BETA2: Bug fix: mispelling and XHTML Compability for Single-line-break tag  
+
+6.x-1.0-BETA3: Bug fix: including css file
+
+6.x-1.0-BETA4: Bug fix: can not insert image after upload/resize/delete image
+
+6.x-1.0-BETA5: New: display image in Image Browser (not yet using imagecache)
+               New: Upgrade Whizzywig library to v59
+               Bug fix: Hilite will hilite entire editor
+
+6.x-1.0-BETA6: New: include simple.css
+               New: you can choose which library version will be used
+               Bug fix: can not insert image when change to subfolder
+               Bug fix: can not insert image, caused by whizzywig v59, we back to whizzywig v58
+			   
+6.x-1.0-BETA7: New: Implementation of Custom Toolbar
+
+6.x-1.0-BETA8: Bug fix: Diplay editor when Comment displayed below post
+               Bug fix: fix order of Toolbar roles (Toolbar Full is higher level then Toolbar Custom)
+               Bug fix: check user_access on menu permission
+               Bug fix: double backslash when folder format setting is blank
+               Bug fix: change default $whizzywig_image_dimension from 480x480 to blank (no limit)
+               New: provides more toolbar: basic, medium and custom
+
+6.x-1.0-BETA9: Bug: CSS file name should be style.css rather than styles.css
+
+6.x-1.0: New: First Stable version
+
+6.x-1.1: New: Add fieldset to Image Browser for better look
+         Bug fix: Simplified CSS selector, now only 2: "Use CSS from theme" or "Use certain css file"
+         Bug fix: Change whizzywig.css to simple.css on Image Browser
+         Bug fix: Change "Resize" button label to "Resize/rename" on Image Browser
+				 
+6.x-1.2: Bug fix: Support non clean-urls site
+         Bug fix: remove whizzywig057.js
+				 
+6.x-1.3: Bug fix: add enctype="multipart/form-data" to form	
+
+6.x-1.4: Bug fix: misinformation on description of Configuration page			 
+
+6.x-1.5: New: Sort table of image browser
+
+6.x-1.6: Bug fix: File rename doesn't work
+         New: Separate form of file Rename and Resize
+				 
+6.x-1.7: New: enable editor for block
+
+6.x-1.8: Bug fix: whizzywig_list_dir() return empty array if null
+         Bug fix: set "enable editor for block=no" by default, this feature still has a bug 
+
+6.x-1.9: Bug fix: resize with aspect ratio (proportional)
+         Bug fix: set whizzywig_block to 0, variable_get("whizzywig_block", 0)
+
+6.x-2.0-alpha1: First version to support Whizzywig 60 series.
+
+6.x-2.0-alpha2: Bug fix: show whizzywig on block
+
+6.x-2.0-alpha3: Bug fix: toolbar_custom get 'whizzywig_toolbar_medium' instead 'whizzywig_toolbar_custom'
+                Bug fix: setting to determina which collapsible field set to un-collapsed
+                Bug fix: disable editor on Whizzywig Settings-page
+                Bug fix: better compability to PHP 5.3 (not tested)
+                Bug fix: set toolbar textfield to textarea to accomodate > 128 chars
+
+6.x-2.0-alpha4: Bug fix: use new icon set
+
+
+6.x-2.0-beta1: New: add custom buttons
+               New: option to select toolbar-button for admin (uid=1)
+
+6.x-2.0-beta2: Bug fix: variable_get('whizzywig_style', 0) to 1;
+
+6.x-2.0-beta3: New: option to choose original image browser (whizzybrowse3.php) or modified version
+               New: use original whizzywig61.js, mean you must download this lib from 
+							 http://code.google.com/p/whizzywig/ and choose whizzywig61.js
+							 Bug fix: PHP 5.3 - Parameter 2 to whizzywig_form_alter() expected to be a reference
+
+6.x-2.0-beta4: Bug fix: remove whizzywig058.js and and whizzybrowse3.php from package
+               Bug fix: put whizzywig.js and whizzybrowse3.php to '/sites/all/libraries/whizzywig/' 
+							 
+6.x-2.0-beta5: Buf fix: error insert image with modified File Browser
+
+6.x-2.0-beta6: Buf fix: Change textfield to textarea so Visibility settings can handle > 255 chars
+                        by bmhaskar (http://drupal.org/user/897556)
+
+
+TO DO LIST
+----------
+1. New: Include a button which opens the editor in a popup as demonstrated on 
+   http://www.unverse.net/wysiwyg-pop.html

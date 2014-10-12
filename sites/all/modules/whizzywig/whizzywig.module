@@ -1,0 +1,953 @@
+<?php
+// $Id: whizzywig.module,v 1.37.2.8 2010/10/11 18:24:25 thenicespider Exp $ 
+
+/**
+ * Display help and module information
+ * @param section which section of the site we're displaying help
+ * @return help text for section
+ */
+function whizzywig_help($section='') {
+  switch ($section) {
+    case 'admin/settings/help#description':
+    case 'admin/help#whizzywig':
+      $output = t("Enables whizzywig WYSIWYG editor.");
+      break;
+  }
+  return $output;
+}
+
+// Valid permissions for this module
+function whizzywig_perm() {
+  return array('whizzywig: access', 'whizzywig: administer',
+	'whizzywig: file - browse', 'whizzywig: file - delete', 'whizzywig: file - upload','whizzywig: file - resize', 'whizzywig: file - rename',
+	'whizzywig: folder - create', 'whizzywig: folder - delete', 
+	'whizzywig: folder - browse another folder',
+	'whizzywig: toolbar - full', 'whizzywig: toolbar - basic', 'whizzywig: toolbar - medium', 'whizzywig: toolbar - custom');
+}
+
+// Implementation of hook_menu().
+function whizzywig_menu() {
+  $items = array(); 
+
+  $items['admin/settings/whizzywig'] = array(
+    'title'            => 'Whizzywig',
+    'description'      => 'Enables whizzywig.',
+    'access arguments' => array('whizzywig: administer'),
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('whizzywig_admin_settings'),
+    'type'             => MENU_NORMAL_ITEM,
+    'file'             => 'whizzywig.settings.inc',
+  );
+
+  $items['admin/settings/whizzywig/settings'] = array(
+    'title'            => 'Basic Settings',
+    'access arguments' => array('whizzywig: administer'),
+    'weight'           => -10,
+    'type'             => MENU_DEFAULT_LOCAL_TASK,
+    'file'             => 'whizzywig.settings.inc',
+  );
+
+  $items['admin/settings/whizzywig/visibility'] = array(
+    'title'            => 'Visibility',
+    'description'      => 'whizzywig Visibility',
+    'access arguments' => array('whizzywig: administer'),
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('whizzywig_settings_visibility'),
+    'type'             => MENU_LOCAL_TASK,
+    'file'             => 'whizzywig.settings.inc',
+  );
+
+  $items['admin/settings/whizzywig/browser'] = array(
+    'title'            => 'File Browser',
+    'description'      => 'Whizzywig File Browser',
+    'access arguments' => array('whizzywig: administer'),
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('whizzywig_settings_file_browser'),
+    'type'             => MENU_LOCAL_TASK,
+    'file'             => 'whizzywig.settings.inc',
+  );
+
+  //File Browse 
+  $items['whizzywig/image_browse'] = array(
+    'access arguments' => array('whizzywig: access'),
+    'page callback' => 'whizzywig_ow_image_browse',
+    //'page arguments' => $folder_name,$sub_folder,$error_msg,
+    'page arguments' => array($error_msg),
+    'type' => MENU_CALLBACK,
+  );
+
+  //File Delete
+  $items['whizzywig/file_delete'] = array(
+    'access arguments' => array('whizzywig: file - delete'),
+    'page callback'    => 'whizzywig_ow_file_delete',
+    'type' => MENU_CALLBACK,
+  );
+
+  //Folder create
+  $items['whizzywig/folder_create'] = array(
+    'access arguments' => array('whizzywig: folder - create'),
+    'page callback'    => 'whizzywig_ow_folder_create',
+    'type' => MENU_CALLBACK,
+  );
+
+  //File Upload
+  $items['whizzywig/file_upload'] = array(
+    'access arguments' => array('whizzywig: file - upload'),
+    'page callback'    => 'whizzywig_ow_file_upload',
+    //'page arguments' => $_REQUEST['folder_name'],$_FILES['file_upload'],
+    'type' => MENU_CALLBACK,
+  );
+
+  //Image Resize Form
+  $items['whizzywig/file_resize_form'] = array(
+    'access arguments' => array('whizzywig: file - resize'),
+    'page callback'    => 'whizzywig_ow_file_resize_form',
+    'type' => MENU_CALLBACK,
+  );
+
+  //Image Resize Action      
+  $items['whizzywig/file_resize_action'] = array(
+    'access arguments' => array('whizzywig: file - resize'),
+    'page callback'    => 'whizzywig_ow_file_resize_action',
+    'type' => MENU_CALLBACK,
+  );
+
+	//Image Rename
+  $items['whizzywig/file_rename_form'] = array(
+    'access arguments' => array('whizzywig: file - rename'),
+    'page callback'    => 'whizzywig_ow_file_rename_form',
+    'type' => MENU_CALLBACK,
+  );
+
+	$items['whizzywig/file_rename_action'] = array(
+    'access arguments' => array('whizzywig: file - rename'),
+    'page callback'    => 'whizzywig_ow_file_rename_action',
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_elements() to show the whizzywig editor when a textarea is loaded
+ */
+function whizzywig_elements(){
+  $type = array(); 
+  if (user_access('whizzywig: access')) {
+    $type['textarea'] = array('#process' => array('whizzywig_process_textarea'));
+  }
+  return $type;
+}
+
+/**
+ * Implementation of hook_form_alter()
+ */
+function whizzywig_form_alter($form, $form_state, $form_id) {
+	// disable 'teaser' textarea
+	unset($form['body_field']['teaser_js']);
+	$form['body_field']['teaser_include'] = array();
+	
+	$values = strtolower(str_replace(' ','',variable_get('whizzywig_uncollapsed','')));
+  $values_arr = explode(',',$values);
+	
+	foreach ($values_arr as $value) {
+	  $form[$value]['#collapsible'] = FALSE;	
+	}
+	//if ($whizzywig_uncollapsed) {
+	  //$form['revision_information']['#collapsible'] = FALSE;	
+		//print "<pre>";
+		//print_r($form);
+		//print "</pre>";
+	//}
+	if (($form_id == 'block_add_block_form') || ($form_id == 'block_admin_configure')) {
+    $form['block_settings']['#collapsible'] = FALSE;
+  }
+}
+
+// Modify the textarea to show whizzywig editor if certain conditions are met. 
+// function whizzywig_change_textarea($element) , whizzywig_process_textarea {
+
+function whizzywig_process_textarea($element) {
+  global $user;
+  
+  if (arg(0) == 'node' && is_numeric(arg(1)) && arg(2)=='edit') {
+    $node = node_load(arg(1));
+    $form_type = $node->type;
+  }
+  if (arg(0) == 'node' && arg(1)=='add') {
+    $form_type = str_replace('-','_',arg(2));
+  }
+	
+  $whizzywig_comment = variable_get('whizzywig_comment', 0);
+  $whizzywig_block   = variable_get("whizzywig_block", 0);
+	
+  $whizzywig_enable = 0;
+	
+  if( _whizzywig_validate_element_id($element["#id"]) 
+	&&  _whizzywig_validate_content_type($form_type) 
+	&&  _whizzywig_allowed_pages()) {
+    $whizzywig_enable= 1;
+  } else {
+	  if (($whizzywig_comment && arg(0)=='comment') 
+		OR  ($whizzywig_comment && $element["#id"]=='edit-comment')) {
+	    $whizzywig_enable= 1;
+	  } else {
+		  if ( $whizzywig_block && $element["#id"]=='edit-body' 
+			&& arg(0)=='admin' && arg(1)=='build' && arg(2)=='block' ) {
+			  $whizzywig_enable= 1;	
+			}	
+		}
+	}
+  
+	//Disable Whizzywig on Setting page itself
+	if (arg(0)=='admin' && arg(1)=='settings' && arg(2)=='whizzywig' ) {
+	  $whizzywig_enable= 0;	
+	}	
+	
+  if ($whizzywig_enable) {
+    if (!$whizzywig_ready) {
+      // get the path for the buttom images
+      $whizzywig_path = base_path().drupal_get_path('module', 'whizzywig');
+      $base_path = base_path();
+	    $buttonpath = $whizzywig_path.'/library/buttons/';     
+	    //$PopupsDir  = $whizzywig_path.'/library/popups/';
+			   
+      // add the whizzywig js library
+	    $whizzywig_library = variable_get('whizzywig_library', 'whizzywig61.js');
+			if (!file_exists("sites/all/libraries/whizzywig/$whizzywig_library") || !file_exists("sites/all/libraries/whizzywig/whizzybrowse3.php")) {
+			  drupal_set_message(t('You must download whizzyiwigXX.js and whizzybrowse3.php'
+				  .' (from http://code.google.com/p/whizzywig/) and put into /sites/all/libraries/whizzywig/,'
+				  .' i.e: /sites/all/libraries/whizzywig/whizzywig61.js.'),'warning');
+				return $element;	
+			} 
+			
+      drupal_add_js("sites/all/libraries/whizzywig/$whizzywig_library");     
+        
+      $whizzywig_ready = TRUE;
+    } 
+		//$script = "mysettings.Toolbar[0] = new Array(". $buttons1 .");\n";   
+    //disable resize script
+    $element['#resizable'] = FALSE;
+    
+    //set the width & height of the textarea, so whizzywig can inherit this
+    $editor_width  = variable_get('whizzywig_editor_width', '100%');
+    $editor_height = variable_get('whizzywig_editor_height', 0);
+    if ($editor_height != 0){
+      // set both
+      $element['#attributes'] = array('style' => "width: $editor_width; height: $editor_height;");
+    } else {
+      // only set width
+      $element['#attributes'] = array('style' => "width: $editor_width;");
+    }
+    
+    // initialize whizzywig 
+	
+    $whizzywig_toolbar_basic  = variable_get('whizzywig_toolbar_basic',  'bold italic underline | left center right | number bullet indent outdent | rule link');
+
+    $whizzywig_toolbar_medium = variable_get('whizzywig_toolbar_medium', 'bold italic underline | left center right newline number bullet indent outdent | rule link clean');
+  
+    $custom_toolbar =
+	    "bold italic underline | left center right\r\n"
+     ."number bullet indent outdent | rule link table clean html superscript selectall code textbox";  
+	
+    $whizzywig_toolbar_custom = variable_get('whizzywig_toolbar_custom',$custom_toolbar);
+    
+    if (user_access('whizzywig: toolbar - basic'))  { $buttons = $whizzywig_toolbar_basic; }
+    if (user_access('whizzywig: toolbar - medium')) { $buttons = $whizzywig_toolbar_medium; }
+    if (user_access('whizzywig: toolbar - custom')) { $buttons = $whizzywig_toolbar_custom; }
+    if (user_access('whizzywig: toolbar - full'))   { $buttons = "all"; }		
+	
+	  if ($user->uid == 1) {
+	    $whizzywig_toolbar_admin = variable_get('whizzywig_toolbar_admin',0);
+      if ($whizzywig_toolbar_admin == 0) { $buttons = "all"; }
+      if ($whizzywig_toolbar_admin == 1) { $buttons = $whizzywig_toolbar_basic; }
+      if ($whizzywig_toolbar_admin == 2) { $buttons = $whizzywig_toolbar_medium; }
+      if ($whizzywig_toolbar_admin == 3) { $buttons = $whizzywig_toolbar_custom; }			
+    }
+	
+    $buttons = str_replace("\r\n",' newline ',$buttons);
+	
+    $element_id = $element['#id'];
+    $toolbarpath = $whizzywig_path . "/library/icons.png";
+    
+    //$imageBrowse =  "$whizzywig_path/library/whizzypic.php?d=".$base_path."sites/default/files";
+     
+    $whizzywig_style = variable_get('whizzywig_style', 1);
+     
+    switch ($whizzywig_style) {
+	  case 0:
+	    $whizzywig_css =  base_path() . path_to_theme(). "/style.css";  
+	  break;
+	  case 1:
+	    $whizzywig_css = $whizzywig_path."/css/".variable_get('whizzywig_style_val', 'simple.css');
+	  break;	
+	  } 
+	
+	$custom_buttons =
+    "buts = 'selectall superscript code';\n"
+   ."dobut['superscript'] = '<sup>';\n"
+	 ."dobut['selectall']   = 'js:oW.document.execCommand(\"selectall\",false,\"\");';\n"
+	 ."dobut['code'] = '<code>';\n\n"
+	 ."sels = 'textbox';\n"
+	 ."opts['textbox'] = new Array('Text box', 'Right', 'Left');\n"
+	 ."vals['textbox'] = new Array(\"\",\"<div style='float:right;width:200px;border:1px solid;padding:.5em;margin:0 5px;'>#\",\"<div style='float:left;width:200px;border:1px solid;padding:.5em;margin:0 5px;'>#\");\n"
+	 ; 
+	 
+	$whizzywig_cust_btns = variable_get('whizzywig_custom_buttons',$custom_buttons); 
+	$whizzywig_file_browser_type = variable_get('whizzywig_file_browser_type',1); 
+	
+	$dirlist = 'sites/default/files';
+	  
+  $element['#suffix'] .= "\n
+	  <script type=\"text/javascript\">
+		  $whizzywig_cust_btns
+	    buttonPath  = \"$whizzywig_path/library/buttons/\";
+      btn._f      = \"$whizzywig_path/library/icons.png\";
+			
+      if ($whizzywig_file_browser_type) {
+			  imageBrowse = \"".url("whizzywig/image_browse")."\";	
+			} else {
+				imageBrowse = \"".base_path()."sites/all/libraries/whizzywig/whizzybrowse3.php?d=".file_directory_path()."\";
+			}
+
+      cssFile     = \"$whizzywig_css\";
+      makeWhizzyWig(\"$element_id\", \"$buttons\");
+    </script>\n
+		";
+  }
+  return $element;
+}
+
+// Validation against textarea ID filters. 
+function _whizzywig_validate_element_id($id){
+  $valid = false;
+  // when returned valid, the whizzywig editor will be shown
+  $values = strtolower(str_replace(' ','',variable_get('whizzywig_textarea_id_val','edit-teaser,edit-body')));
+  $values_arr = explode(',',$values);
+  // exclude some textfields that we need on the settings page from showing the editor
+  //array_push($values_arr,'edit-whizzywig-textarea-id-val');
+  //array_push($values_arr,'edit-whizzywig-visibility-path-val');
+  //array_push($values_arr,'edit-whizzywig-page-val');
+  //array_push($values_arr,'edit-whizzywig-toolbar-buttons-list');
+  
+	if(variable_get('whizzywig_textarea_id',1) == 0){
+    // don't show editor if id is found in values
+    if(!in_array($id,$values_arr)){
+      $valid = true; 
+    }
+  }else{
+    // only show editor if id is found in values
+    if(in_array($id,$values_arr)){
+      $valid = true; 
+    }
+  }
+  return $valid;
+}
+
+// Validation against content-type filters. 
+function _whizzywig_validate_content_type($content_type){
+  $valid = false; // when returned valid, the whizzywig editor will be shown
+  $values = strtolower(str_replace(' ','',variable_get('whizzywig_content_type_val','page')));
+  $values_arr = explode(',',$values);
+	
+	if(variable_get('whizzywig_content_type',1) == 0){
+    if(!in_array($content_type,$values_arr)){$valid = true;}
+  }else{
+    if(in_array($content_type,$values_arr)){$valid = true;}
+  }
+  return $valid;
+}
+
+// Validation against pages filters. 
+function _whizzywig_allowed_pages() {
+  $whizzywig_page = variable_get('whizzywig_page','0');
+  $values = strtolower(str_replace(' ','',variable_get('whizzywig_page_val','')));
+  
+  if ($whizzywig_page < 2) {
+    $path = drupal_get_path_alias($_GET['q']);
+    $regexp = '/^('. preg_replace(array('/(\r\n?|\n)/', '/\\\\\*/', '/(^|\|)\\\\<front\\\\>($|\|)/'), array('|', '.*', '\1'. preg_quote(variable_get('site_frontpage', 'node'), '/') .'\2'), preg_quote($values, '/')) .')$/';
+    // Compare with the internal and path alias (if any).
+    $page_match = preg_match($regexp, $path);
+    if ($path != $_GET['q']) {
+      $page_match = $page_match || preg_match($regexp, $_GET['q']);
+    }
+    // When $block->visibility has a value of 0, the block is displayed on
+    // all pages except those listed in $block->pages. When set to 1, it
+    // is displayed only on those pages listed in $block->pages.
+    $page_match = !($whizzywig_page xor $page_match);
+  } else {
+    $page_match = drupal_eval($values);
+  }
+  return $page_match;
+}
+
+function whizzywig_ow_image_browse($error_msg) {
+  global $user;
+  $form_id_name = $_GET['rtn'];
+  
+  if (!user_access('whizzywig: access')) { return; }
+  
+  if (!user_access('whizzywig: file - browse')) {
+    print t("Sorry, you have no 'File Browse' access.")."<hr>";
+	  print '<input type="submit" value=" Close " onClick="window.close();" />'; 	
+	  exit();
+  }	
+	
+	$whizzywig_path = base_path().drupal_get_path('module', 'whizzywig');
+	
+	$whizzywig_style = variable_get('whizzywig_style', 1);
+     
+  switch ($whizzywig_style) {
+	case 0:
+	  $whizzywig_css =  base_path() . path_to_theme(). "/style.css";  
+	break;
+	case 1:
+	  $whizzywig_css = $whizzywig_path."/css/".variable_get('whizzywig_style_val', 'simple.css');
+	break;	
+	}
+	
+  $folder_name = $_REQUEST['folder_name'];
+  $sub_folder  = $_REQUEST['sub_folder'];
+  
+  $uid = $user->uid;
+  $name = $user->name;
+  $base_path = base_path();
+  $whizzywig_path = $base_path.drupal_get_path('module', 'whizzywig'); 
+  $files_path = file_directory_path();
+  $whizzywig_folder_format = variable_get('whizzywig_folder_format', 'u[uid]');
+  $whizzywig_folder_format = str_replace('[uid]',$uid,$whizzywig_folder_format);
+  $whizzywig_folder_format = str_replace('[username]',$name,$whizzywig_folder_format);
+  $whizzywig_folder_format = str_replace('[domainname]',$_SERVER['HTTP_HOST'],$whizzywig_folder_format);
+  
+  if ($whizzywig_folder_format=='') { $user_dir = "$files_path";  }
+  else { $user_dir = "$files_path/$whizzywig_folder_format"; }
+  	
+  if ($folder_name=='') {
+    if ($whizzywig_folder_format=='') { $folder_name = "$files_path"; }
+	else { $folder_name = "$files_path/$whizzywig_folder_format";}  
+	
+    //Check and create user folder
+    if (file_exists($folder_name)) { 
+	    if (!is_dir($folder_name)) { mkdir($folder_name);	}
+    } else { mkdir($folder_name);	}		
+  } else {
+    if ($sub_folder!='') { $folder_name = $folder_name."/".$sub_folder; }
+	  if (strpos($folder_name, '/..')) {
+	    $folder_name = str_replace('/..','', $folder_name);
+	    $pos = 0;
+	    while(strpos($folder_name,'/',$pos) ) {
+        $pos++;
+      }
+      if ($pos!=0) { $pos=$pos-1;}
+      $folder_name = substr($folder_name,0,$pos);
+    }
+  }
+  //Folder manager
+  if (!user_access('whizzywig: folder - browse another folder')) {
+	if (!strpos($dir,$user_dir)) {
+	  $error_msg = t("Sorry, you have no 'whizzywig: folder - browse another folder' access, you only can browse to your own folder.");
+	  $folder_name = $user_dir;
+	}	
+  }
+  
+  $dir = $folder_name;
+
+  //Form of Image Browse
+  $output  = '';
+  $output .= '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">'."\n";
+
+  $output .= '<html>'."\n";
+  $output .= '<head>'."\n";
+  $output .= '<title>whizzywig | Insert or Modify Image</title>'."\n";
+
+  $output .= '<style media="all" type="text/css">';
+  $output .= '@import "'.$whizzywig_css.'?1";';
+  $output .= '</style>'."\n";
+	
+	$output .= '<script type="text/javascript" src="'.$whizzywig_path.'/library/sorttable.js"></script>'."\n";
+  
+	$output .= '<script language="JavaScript" type="text/javascript">'."\n";
+  
+  $output .= '// ----------------------------------------------------------------------'."\n";
+  $output .= '//  Function    : Inserts image into the WYSIWYG.'."\n";
+  $output .= '// ----------------------------------------------------------------------'."\n";
+  
+  $output .= "function fillImageForm(imgS,imgW,imgH) { \n";
+  
+	$output .= "  window.opener.document.getElementById('if_url'+window.opener.idTa).value = imgS; ";
+	
+	//function _wImage(url) {
+  //  window.opener.document.getElementById('if_url'+window.opener.idTa).value=url;
+  // window.close();
+  //}
+	
+  // ok: $output .= "  window.opener.document.getElementById('".$form_id_name."').value = imgS; \n";
+  // $output .= "  window.opener.GetValueFromChild(imgS,imgW,imgH); \n";
+	// window.opener.document.getElementById('if_url').value = url;  (for images)
+	
+  $output .= "  window.close(); \n";
+  $output .= "  return false; \n";
+  $output .= "}\n\n";
+  
+  $output .= "function confSubmit(form) { \n";
+  $output .= "  if (confirm('Are you sure?')) { \n";
+  $output .= "    form.submit(); \n";
+  $output .= "  }\n";  
+  $output .= "}\n\n";
+  
+  $output .= '</script>';
+  $output .= '</head>'."\n";
+  $output .= '<body bgcolor="#EEEEEE">'."\n";
+  
+  if ($error_msg) { $output .= "<div id='error_msg'>$error_msg</div>"; }
+  
+  //Folder Navigation
+	
+	$output .= "<fieldset>"."\n";
+  $output .= "<legend>File upload</legend>"."\n";
+  //$output .= "<form action='".url("whizzywig/image_browse")."' name='folder_nav' id='folder_nav' method='post' style='margin-bottom:2px;'>";
+  $output .= "<form action='".url("whizzywig/image_browse", array('query' => array('rtn' => $_GET['rtn'])))."' name='folder_nav' id='folder_nav' method='post' style='margin-bottom:2px;'>"."\n";
+  $output .= '<table border=0 width="100%" style="border:solid 2px #FFF; background:#F7F7F7;">'."\n";
+  $output .= '<tr>';
+  $output .= '<td style="font-size: 11px;">';
+	$output .= t('Current Folder').": $folder_name".' <select name="sub_folder" id="sub_folder" style="font-size: 11px;">';
+  foreach (whizzywig_list_dir($dir) as $value) {
+    $output .= "	 <option value='$value' ".($value==$sub_folder ? " selected='selected'" : '').">$value</option>";
+    $output .= "<form action='".url("whizzywig/image_browse", array('query' => array('rtn' => $_GET['rtn'])))."' name='folder_nav' id='folder_nav' method='post' style='margin-bottom:2px;'>"."\n";
+	}
+	$output .= '</select>'."\n";
+	$output .= '<input type="submit" value="Change folder" style="font-size: 11px;"/>'."\n";
+	$output .= '<input type="hidden" name="folder_name" value="'. $folder_name.'" />'."\n";
+	$output .= '<input type="hidden" name="token" value="'. $token .'" />'."\n";
+	$output .= '</td>'."\n";
+	$output .= '</tr>'."\n";
+  $output .= '</table>'."\n";
+  $output .= '</form>'."\n"; 
+	
+	if (user_access('whizzywig: file - upload')) {
+	  //$output .= '<form name="form_upload" action="'.url("whizzywig/file_upload").'" method="post" id="uploadform" enctype="multipart/form-data">';
+    $output .= '<form name="form_upload" action="'.url("whizzywig/file_upload", array('query' => array('rtn' => $_GET['rtn']))).'" method="post" id="uploadform" style="margin-bottom:2px;" enctype="multipart/form-data">'."\n";
+    $output .= '<table border=0 width="100%" style="border:solid 2px #FFF; background:#F7F7F7;">';
+    $output .= '<tr>'."\n";
+    $output .= '<td style="font-size: 11px;">'.t('File to upload').'</td>'."\n";
+		$output .= '<td><input type="file" name="file_upload" id="file_upload" size=25 style="font-size: 11px;"/>'."\n";
+    $output .= "<input type='hidden' name='folder_name' value='$folder_name' />"."\n";
+    $output .= '<input type="submit" name="file_upload" value="'.t('Upload Now').'" style="font-size: 11px;"/></td>'."\n";
+    $output .= '</tr>'."\n";
+    $output .= '</table>'."\n";
+    $output .= '</form>'."\n";
+	}
+	$output .= "</fieldset>"."\n";
+	
+	//Folder create
+	if (user_access('whizzywig: folder - create')) {
+	  //$output .= '<form name="folder_create" action="'.url("whizzywig/folder_create").'" method="post" id="folder_create" enctype="multipart/form-data" style="margin-bottom:2px;">';
+      $output .= "<fieldset>";
+			$output .= "<legend>Create sub folder at current folder</legend>";
+      $output .= '<form name="folder_create" action="'.url("whizzywig/folder_create", array('query' => array('rtn' => $_GET['rtn']))).'" method="post" id="folder_create" enctype="multipart/form-data" style="margin-bottom:2px;">';
+    $output .= '<table border=0 width="100%" style="border:solid 2px #FFF; background:#F7F7F7;">';
+    $output .= '<tr>';
+    $output .= '<td style="font-size: 11px;">'.t('Sub folder name').'</td>';
+    // $output . = '<input type="hidden" name="token" value="'. $token .'" />';
+    $output .= "<input type='hidden' name='folder_name' value='$folder_name' />";
+    $output .= '<td><input type="text" name="new_folder" id="new_folder" value="" style="font-size: 11px;width:100%"/></td>';
+    $output .= '<td><input type="submit" name="folder_create" value="'.t('Create sub folder').'" style="font-size: 11px;"/></td>';
+    $output .= '</tr>';
+    $output .= '</table>';
+    $output .= '</form>';
+		$output .= "</fieldset><br />";
+	}
+  
+  if(is_dir($dir)) {
+    if($handle = opendir($dir)) { 
+      $output .= "<table class='sortable' cellspacing=0 style='border:solid 2px #AAAAAA;' width='100%'>";
+      $output .= "<thead>";
+			$output .= "<tr bgcolor='#B4B4B4'>";
+      $output .= "<th style='font-size: 11px;'><b>#</b></td>";
+			$output .= "<th style='font-size: 11px;' align='left'><b>FILE NAME</b></td>";
+			$output .= "<th style='font-size: 11px;'><b>IMG</b></td>";
+			$output .= "<th style='font-size: 11px;' align='right' width='100'><b>SIZE (KB)</b></td>";
+			$output .= "<th style='font-size: 11px;' align='right' width='120'><b>MODIFIED TIME</b></td>";
+			$output .= "<th style='font-size: 11px;' align='right'><b>DIMENSION</b></td>";
+			$output .= "<th style='font-size: 11px;' align='center' colspan='4'><b>ACTION</b></td>";
+			$output .= "</tr>";
+			$output .= "</thead>";
+
+			$folder_size = 0;
+			
+			$files = scandir($dir);
+			//$output .= print_r($files);
+			$files_count = count($files);
+			
+			$j = 0;
+      
+			for ($i=1; $i < $files_count; $i++) {
+			  $file = $files[$i]; 
+        if(!is_dir("$dir/$file") && $file != "." && $file != ".." && $file != "Thumbs.db" && $file!=".htaccess") {
+          $j++;
+          if ($j % 2) { $bgcolor='#FFFFFF';} else { $bgcolor="#DDDDDD";} 
+          $output .= "<tr bgcolor='$bgcolor'>";
+          $file_path = "$dir/$file";
+          $file_url  = "$base_path$dir/$file";
+          $file_size = number_format(filesize($file_path)/1024,1);
+          $folder_size += $file_size;
+					$file_date = date ("Y-m-d H:i", filemtime($file_path));
+          list($imgW,$imgH) = @getimagesize($file_path);
+          $output .= "<td style='font-size: 11px;' align='right'>$j.</td>";
+					$output .= "<td style='font-size: 11px;'>$file</td>";
+					$output .= "<td style='font-size: 11px;'><img src='".base_path()."$dir/$file' width='40' height='30'/></td>";
+					$output .= "<td style='font-size: 11px;' align='right'>$file_size </td>";
+					$output .= "<td style='font-size: 11px;' align='right'>$file_date </td>";					
+					$output .= "<td style='font-size: 11px;' align='right'>$imgW x $imgH &nbsp;</td>";
+					
+					$output .= "<td style='font-size: 11px;margin:0;padding:0;' align='center' width=10 valign='center'>";
+					$output .= "<form name='form_insert' method='post' style='margin:0;'>";
+					$output .= "<input type='submit' id='if_url' value='Insert' onClick=\"fillImageForm('$file_url',$imgW,$imgH); return false;\" style='font-size:11px;' />";
+					$output .= '</form>';
+					$output .= "</td>";
+					
+					if (user_access('whizzywig: file - delete')) {
+					  $output .= "<td style='font-size: 11px;' align='center' width=10>";
+						$output .= "<form action='".url('whizzywig/file_delete', array('query' => array('rtn' => $_GET['rtn'])))."' method='post' style='margin:0;'>";
+					  $output .= "<input type='hidden' name='folder_name' value='$folder_name' />";
+					  $output .= "<input type='hidden' name='file_name' value='$file' />";
+						$output .= '<input type="button" value="Delete" onclick="confSubmit(this.form);" style="font-size: 11px;">';
+						$output .= '</form>';
+						$output .= "</td>";
+					}
+					
+					if (user_access('whizzywig: file - rename')) {
+					  $output .= "<td style='font-size: 11px;' align='center' width=10>";
+					  $output .= "<form action='".url('whizzywig/file_rename_form', array('query' => array('rtn' => $_GET['rtn'])))."' method='post' style='margin:0;'>";
+					  $output .= '<input type="submit" name="rename" value="'.t('Rename').'" style="font-size: 11px;"/>';
+					  $output .= "<input type='hidden' name='folder_name' value='$folder_name' />";
+					  $output .= "<input type='hidden' name='file_name' value='$file' />";
+					  $output .= '</form></td>';
+					}
+					
+					if (user_access('whizzywig: file - resize')) {
+					  $output .= "<td style='font-size: 11px;' align='center' width=10>";
+					  $output .= "<form action='".url('whizzywig/file_resize_form', array('query' => array('rtn' => $_GET['rtn'])))."' method='post' style='margin:0;'>";
+					  $output .= '<input type="submit" name="resize" value="'.t('Resize').'" style="font-size: 11px;"/>';
+					  $output .= "<input type='hidden' name='folder_name' value='$folder_name' />";
+					  $output .= "<input type='hidden' name='file_name' value='$file' />";
+					  $output .= '</form></td>';
+					}
+				
+		      $output .= "</tr>";
+        }
+      }
+			
+			$output .= "<tfoot>";
+      $output .= "<tr bgcolor='#B4B4B4'>";
+      $output .= "<td style='font-size: 11px;' colspan='2'>&nbsp;</td>";
+      $output .= "<td style='font-size: 11px;' align='right'>Total</td>";
+			$output .= "<td style='font-size: 11px;' align='right'>".number_format($folder_size,1)."</td>";
+			$output .= "<td style='font-size: 11px;'>&nbsp;</td>";
+			$output .= "<td style='font-size: 11px;' align='center' colspan='5'>&nbsp;</td>";
+			$output .= "</tr>";
+			$output .= "</tfoot>";
+      $output .= "</table>";
+	
+      $output .= '</body>';
+      $output .= '</html>';
+      closedir($handle);
+  
+      print $output;
+      exit();
+    }
+  }
+}
+
+function whizzywig_ow_file_delete() {   
+  $folder_name = $_REQUEST['folder_name'];
+	$file_name = $_REQUEST['file_name']; 
+  
+  if (!user_access('whizzywig: access') || !user_access('whizzywig: file - delete')) { return; }
+  
+  if (file_delete("$folder_name/$file_name")) {
+    $error_msg = t("Success. File '$file_name' deleted.");
+  } else {
+    $error_msg = t("Error deleting file: $folder_name/$file_name");
+  }
+  whizzywig_ow_image_browse($error_msg);
+}
+
+function whizzywig_ow_file_upload() {
+  $folder_name = strtolower($_REQUEST['folder_name']);
+  $files       = $_FILES['file_upload'];
+	
+  if (!user_access('whizzywig: access') || !user_access('whizzywig: file - upload')) { return; }
+  
+  $file_name = $files["name"];
+  //File exists 
+  if (file_exists("$folder_name/$file_name")) {
+    $error_msg = t("Error. The '$file_name' already exists.");
+	  whizzywig_ow_image_browse($error_msg);return;
+	}
+  //File Extension
+	$pos = 0;
+	while( strpos($file_name,'.',$pos) ) {
+    $pos++;
+  }
+  if ($pos<>0) { $pos= $pos-1; }
+  $values = trim(strtolower(variable_get('whizzywig_file_extension','gif jpg jpeg png')));
+  if ($values<>'') {
+    $values_arr = explode(' ',$values);
+    $file_extension = strtolower(substr($file_name,$pos+1));
+    
+    if(!in_array($file_extension,$values_arr)) {
+	    $error_msg = t("Error. File extension disallowed: $file_extension");
+	    whizzywig_ow_image_browse($error_msg);
+	    return; 
+	  } 
+  }
+  
+  //File dimension
+  $whizzywig_image_dimension = strtoupper(trim(variable_get('whizzywig_image_dimension','')));
+  $pos=0;
+  $image_max_w = substr($whizzywig_image_dimension,0,$pos=strpos($whizzywig_image_dimension,'X',$pos));
+  $image_max_h = substr($whizzywig_image_dimension,$pos+1);
+  
+	list($imgW,$imgH) = @getimagesize($files['tmp_name']);
+	if ($whizzywig_image_dimension<>'' && ($imgW > $image_max_w || $imgH > $image_max_h)) {
+	  $image_max_h = ceil($imgH/$imgW * $image_max_w);
+	  if (!image_resize($files['tmp_name'], "$folder_name/$file_name", $image_max_w, $image_max_h)) {
+      $error_msg = t("Error. Can not resize file to $image_max_w x $image_max_h");
+	    whizzywig_ow_image_browse($error_msg);
+      return;	 
+    }		
+  } else {
+  //File move
+    if (!move_uploaded_file($files["tmp_name"],"$folder_name/$file_name")) {
+	    $error_msg = t("Error. Invalid file");
+	    whizzywig_ow_image_browse($error_msg);
+	    return;
+	  }	
+	}
+  //File size
+	$whizzywig_file_size = variable_get('whizzywig_file_size', '0');
+  if ($whizzywig_file_size) {
+	$upload_size= ceil(filesize("$folder_name/$file_name")/1024);
+	if ($upload_size > $whizzywig_file_size) {
+	  $error_msg = t("Error. Your file is: $upload_size KB. Maximum file size is: $whizzywig_file_size KB");
+	  file_delete("$folder_name/$file_name");
+	  whizzywig_ow_image_browse($error_msg);
+      return;	
+    }
+  }
+  
+  $error_msg = t("Success. File '$file_name' uploaded");
+  whizzywig_ow_image_browse($error_msg);
+  return;   
+}
+
+function whizzywig_list_dir($base_dir) {
+  if(!is_dir($base_dir)) { $result = array(); }
+  
+  if($handle = opendir($base_dir)) {
+    $result = array();
+    while(($file_dir = readdir($handle)) !== false) {
+      if(is_dir("$base_dir/$file_dir") && $file_dir<>'.') { $result[] .= $file_dir; }	
+	  }
+	}		
+	return $result;
+}
+
+function whizzywig_ow_folder_create() {
+  global $user;
+  
+  $folder_name = $_REQUEST['folder_name'];
+  $sub_folder  = $_REQUEST['sub_folder'];
+  $new_folder  = $_REQUEST['new_folder'];
+  
+  //print "Folder= $folder_name  Sub-folder= $sub_folder New-folder = $new_folder";
+  //exit();
+  
+  if (!user_access('whizzywig: access') || !user_access('whizzywig: folder - create')) { return; }
+  
+  $error_msg ='';
+  if ($new_folder=='') { whizzywig_ow_image_browse($error_msg);  }
+  
+  $uid = $user->uid;
+  $base_path = base_path();
+  $files_path = file_directory_path();
+  
+  $whizzywig_folder_format = variable_get('whizzywig_folder_format', 'u[uid]');
+  $whizzywig_folder_format = str_replace('[uid]',$uid,$whizzywig_folder_format);
+  $whizzywig_folder_format = str_replace('[username]',$name,$whizzywig_folder_format);
+  $whizzywig_folder_format = str_replace('[domainname]',$_SERVER['HTTP_HOST'],$whizzywig_folder_format);
+  
+  if ($whizzywig_folder_format=='') { $user_dir = "$files_path"; }
+  else { $user_dir = "$files_path/$whizzywig_folder_format"; }
+  
+  $dir = "$folder_name/$new_folder";
+  
+  //Security check
+  if (strpos($dir,'..')) {
+    print t("Sorry. Invalid sub folder name.")."<hr>";
+	print '<input type="submit" value=" Close " onClick="window.close();" />';
+	exit();
+  }
+  //Folder manager
+  if (!user_access('whizzywig: folder - browse another folder')) {
+	if (!strpos($dir,$user_dir)) {
+	  print t("Sorry, you have no 'whizzywig: folder - browse another folder' access, you only can create folder into your own folder.");
+	  exit();
+	}	
+  }
+  
+  //Check and create user sub folder
+  $success = false;
+  if (file_exists("$dir")) { 
+	if (is_dir("$dir")) {
+	  $error_msg = t("Error. Sub folder '$new_folder' already exists.");
+	} else {
+	  if (mkdir($dir)) { 
+		$success = true;
+		$error_msg = t("Success. Create sub folder: $new_folder");
+	  } else {
+	    $error_msg = __line__.": ".t("Error. Can not create sub folder: $new_folder");
+	  } 
+	}
+  } else {
+	if (mkdir($dir)) { 
+	  $success = true;
+	  $error_msg = t("Success. Create sub folder: $new_folder");
+	} else {
+	  $error_msg = __line__.": ".t("Error. Can not create sub folder: $new_folder");
+	}
+  }
+  whizzywig_ow_image_browse($error_msg); 
+}
+
+function whizzywig_ow_file_resize_form() {
+  $folder_name = $_REQUEST['folder_name'];
+  $file_name   = $_REQUEST['file_name']; 
+   
+  $whizzywig_file_resize_width  = variable_get('whizzywig_file_resize_width', ''); 
+  $whizzywig_file_resize_height = variable_get('whizzywig_file_resize_height', '');
+  
+  $output  = '';
+  $output .= '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">';
+  $output .= '<html>';
+  $output .= '<head>';
+  $output .= '<title>Whizzywig | Insert or Modify Image</title>';	
+  $output .= '</head>';
+  
+  $output .= '<body bgcolor="#EEEEEE">';
+  //$output .= "<form action='".url("whizzywig/file_resize_action")."' name='file_resize_form' id='file_resize_form' method='post' style='margin-bottom:2px;'>";
+  $output .= "<form action='".url("whizzywig/file_resize_action", array('query' => array('rtn' => $_GET['rtn'])))."' name='file_resize_form' id='file_resize_form' method='post' style='margin-bottom:2px;'>";
+  $output .= "<span style='font-size: 11px; font-weight: bold;'>Resize '$folder_name/$file_name' image to:</span>";
+  $output .= '<table width="100%" border="0" cellpadding="1" cellspacing="0" style="background: #F7F7F7;border:2px solid white;padding:5px;">';
+  $output .= '<tr>';
+  $output .= "<td width='50' style='font-size:11px;'>Width:</td><td><input type='text' name='resize_width' id='resize_width' style='font-size:10px;' value='$whizzywig_file_resize_width'/></td>";
+  $output .= '</tr>';
+	$output .= '<tr>';
+  $output .= "<td style='font-size:11px;'>Height:</td><td><input type='text' name='resize_height' id='resize_height' style='font-size:10px;' value='$whizzywig_file_resize_height'/></td>";
+  $output .= '</tr>';
+  $output .= '<tr><td colspan="4" style="font-size:11px;">'.t('* Proportional width: fill only the <b>Width</b> field, leave Height blank').'</td></tr>';
+  $output .= '<tr><td colspan="4" style="font-size:11px;">'.t('* Proportional height: fill only the <b>Height</b> field, leave Width blank').'</td></tr>';
+  $output .= '</table>';
+  
+  $output .= '<input type="hidden" name="file_name" value="'.$file_name.'" />';
+  $output .= '<input type="hidden" name="folder_name" value="'.$folder_name.'" />';
+  $output .= "<input type='submit' name='resize' value='".t('Resize now')."' style='font-size: 11px;'/>";
+  $output .= '<input type="button" value=" Cancel" onClick="history.go(-1);" style="font-size: 11px;"/>';
+  $output .= "</form>";
+  
+  $output .= '</body>';
+  print $output;
+  exit();
+}
+
+function whizzywig_ow_file_resize_action() { 
+  $folder_name = $_REQUEST['folder_name'];
+  $file_name   = $_REQUEST['file_name']; 
+  $resize_w    = $_REQUEST['resize_width'];
+  $resize_h    = $_REQUEST['resize_height'];
+ 
+  $full_file_name = "$folder_name/$file_name";
+  
+  list($imgW,$imgH) = @getimagesize("$folder_name/$file_name");
+  
+  if ($resize_w!='' && $resize_h=='') { $resize_h = ceil($imgH/$imgW * $resize_w); }
+	if ($resize_w=='' && $resize_h!='') { $resize_w = ceil($imgW/$imgH * $resize_h); }
+  
+	if (image_resize("$full_file_name","$full_file_name",$resize_w,$resize_h)) {
+	  $error_msg= t("Success. Resize file '$full_file_name' $imgW x $imgH to $resize_w x $resize_h.");
+	} else {
+	  $error_msg= t("Error. Can't resize file '$full_file_name' $imgW x $imgH to $resize_w x $resize_h.");
+	}
+
+	whizzywig_ow_image_browse($error_msg); 
+	exit();	
+}
+
+//RENAME
+function whizzywig_ow_file_rename_form() {
+  $folder_name = $_REQUEST['folder_name'];
+	$file_name = $_REQUEST['file_name']; 
+   
+  //$whizzywig_file_resize_width  = variable_get('whizzywig_file_resize_width', ''); 
+  //$whizzywig_file_resize_height = variable_get('whizzywig_file_resize_height', '');
+  
+  $output  = '';
+  $output .= '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">';
+  $output .= '<html>';
+  $output .= '<head>';
+  $output .= '<title>Whizzywig | Insert or Modify Image</title>';	
+  
+  $output .= '<script language="JavaScript" type="text/javascript">';
+  
+  $output .= "function confSubmit(form) { \n";
+  $output .= "  if (rename=form.file_rename.value!='') { \n";
+  $output .= "    if (confirm('Rename file, are you sure?')) { \n";
+  $output .= "      form.submit(); \n";
+  $output .= "    }\n";  
+  $output .= "  }\n";
+  $output .= "}\n\n";
+  
+  $output .= '</script>';
+  $output .= '</head>';
+  
+  $output .= '<body bgcolor="#EEEEEE">';
+  $output .= "<form action='".url("whizzywig/file_rename_action", array('query' => array('rtn' => $_GET['rtn'])))."' name='file_rename_form' id='file_resize_form' method='post' style='margin-bottom:2px;'>";
+  $output .= "<span style='font-size: 11px; font-weight: bold;'>Rename '$folder_name/$file_name' image to:</span>";
+  
+  $output .= '<table width="100%" border="0" cellpadding="1" cellspacing="0" style="background: #F7F7F7;border:2px solid white;padding:5px;">';
+	$output .= '<tr>';
+  $output .= '  <td width="150" style="font-size:11px;">New file name:</td>';
+	$output .= '  <td style="font-size:10px;"><input type="text" name="file_rename" id="file_rename" value="" style="font-size:10px;width:100%;"/>';
+	$output .= ' </tr>';
+  $output .= '</table><br>';
+  $output .= '<input type="hidden" name="file_name" value="'.$file_name.'" />';
+  $output .= '<input type="hidden" name="folder_name" value="'.$folder_name.'" />';
+  $output .= "<input type='button' name='rename' value='".t('Rename')."' onclick=\"confSubmit(this.form);\" style='font-size: 11px;'/>";
+  $output .= '<input type="button" value=" Cancel" onClick="history.go(-1);" style="font-size: 11px;"/>';
+  $output .= "</form>";
+  
+  $output .= '</body>';
+  print $output;
+  exit();
+}
+
+function whizzywig_ow_file_rename_action() { 
+  $folder_name = $_REQUEST['folder_name'];
+	$file_name   = $_REQUEST['file_name']; 
+  $file_rename = $_REQUEST['file_rename'];
+ 
+  $old_file = "$folder_name/$file_name";
+  $new_file = "$folder_name/$file_rename";
+  
+	//if ($file_rename!='') {
+    if (rename("$old_file","$new_file")) {
+	    $error_msg= t("Success. Rename file '$old_file' to '$new_file'");
+	  } else {
+	    $error_msg= t("Error. Can not rename file '$old_file' to '$new_file'");	
+	  }
+	//}
+	$error_msg ="aneh";
+	whizzywig_ow_image_browse($error_msg); 
+	exit();	
+}

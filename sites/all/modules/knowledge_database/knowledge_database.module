@@ -1,0 +1,7 @@
+<?php
+
+include_once('knowledge_database.features.inc');
+
+function knowledge_database_init() {
+  drupal_add_js('misc/collapse.js');
+}
